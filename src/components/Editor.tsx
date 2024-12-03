@@ -32,51 +32,74 @@ export default function Editor({ content, onChange }: EditorProps) {
     setIsMounted(true)
   }, [])
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        bulletList: {
-          keepMarks: true,
-          keepAttributes: false,
+  const editor = useEditor(
+    {
+      extensions: [
+        StarterKit.configure({
+          bulletList: {
+            keepMarks: true,
+            keepAttributes: false,
+            HTMLAttributes: {
+              class: 'list-disc list-outside ml-4',
+            },
+          },
+          orderedList: {
+            keepMarks: true,
+            keepAttributes: false,
+            HTMLAttributes: {
+              class: 'list-decimal list-outside ml-4',
+            },
+          },
+          heading: {
+            levels: [1, 2, 3],
+          },
+        }),
+        TextAlign.configure({
+          types: ['heading', 'paragraph', 'bulletList', 'orderedList'],
+        }),
+        Underline,
+      ],
+      autofocus: true,
+      enableInputRules: true,
+      enablePasteRules: true,
+      editorProps: {
+        attributes: {
+          class: 'prose max-w-none w-full focus:outline-none',
         },
-        orderedList: {
-          keepMarks: true,
-          keepAttributes: false,
-        },
-      }),
-      TextAlign.configure({
-        types: ['heading', 'paragraph', 'bulletList', 'orderedList'],
-      }),
-      Underline,
-    ],
-    editorProps: {
-      attributes: {
-        class: 'prose max-w-none w-full focus:outline-none',
+      },
+      onCreate: ({ editor }) => {
+        editor.setOptions({ immediateRender: false })
+      },
+      content: isMounted ? content : '',
+      onUpdate: ({ editor }) => {
+        onChange(editor.getHTML())
       },
     },
-    onCreate: ({ editor }) => {
-      editor.setOptions({ immediateRender: false })
-    },
-    content,
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML())
-    },
-    enableCoreExtensions: true,
-  }, [isMounted])
+    [isMounted]
+  )
 
   useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
+    if (editor && isMounted && content !== editor.getHTML()) {
       editor.commands.setContent(content)
     }
-  }, [content, editor])
+  }, [content, editor, isMounted])
 
   if (!isMounted || !editor) {
     return (
-      <div className={`min-h-[200px] border rounded-md p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
-        <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-gray-200 rounded w-3/4" />
-          <div className="h-4 bg-gray-200 rounded w-1/2" />
-          <div className="h-4 bg-gray-200 rounded w-5/6" />
+      <div className="prose max-w-none w-full">
+        <div className={`mb-4 p-2 border rounded-md ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+          <div className="flex gap-2">
+            {[...Array(10)].map((_, i) => (
+              <div key={i} className="w-8 h-8 rounded bg-gray-200 animate-pulse" />
+            ))}
+          </div>
+        </div>
+        <div className={`min-h-[200px] border rounded-md p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+          <div className="animate-pulse space-y-3">
+            <div className={`h-4 rounded w-3/4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`} />
+            <div className={`h-4 rounded w-1/2 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`} />
+            <div className={`h-4 rounded w-5/6 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`} />
+          </div>
         </div>
       </div>
     )
@@ -90,55 +113,55 @@ export default function Editor({ content, onChange }: EditorProps) {
       disabled: !editor.can().undo(),
     },
     {
-      tooltip: 'Redo',
+      tooltip: 'Redo (⌘⇧Z)',
       icon: <RedoOutlined />,
       onClick: () => editor.chain().focus().redo().run(),
       disabled: !editor.can().redo(),
     },
     {
-      tooltip: 'Bold',
+      tooltip: 'Bold (⌘B)',
       icon: <BoldOutlined />,
       onClick: () => editor.chain().focus().toggleBold().run(),
       active: editor.isActive('bold'),
     },
     {
-      tooltip: 'Italic',
+      tooltip: 'Italic (⌘I)',
       icon: <ItalicOutlined />,
       onClick: () => editor.chain().focus().toggleItalic().run(),
       active: editor.isActive('italic'),
     },
     {
-      tooltip: 'Strike',
+      tooltip: 'Strike (⌘⇧X)',
       icon: <StrikethroughOutlined />,
       onClick: () => editor.chain().focus().toggleStrike().run(),
       active: editor.isActive('strike'),
     },
     {
-      tooltip: 'Bullet List',
+      tooltip: 'Bullet List (⌘⇧8)',
       icon: <UnorderedListOutlined />,
       onClick: () => editor.chain().focus().toggleBulletList().run(),
       active: editor.isActive('bulletList'),
     },
     {
-      tooltip: 'Ordered List',
+      tooltip: 'Ordered List (⌘⇧7)',
       icon: <OrderedListOutlined />,
       onClick: () => editor.chain().focus().toggleOrderedList().run(),
       active: editor.isActive('orderedList'),
     },
     {
-      tooltip: 'Align Left',
+      tooltip: 'Align Left (⌘⇧L)',
       icon: <AlignLeftOutlined />,
       onClick: () => editor.chain().focus().setTextAlign('left').run(),
       active: editor.isActive({ textAlign: 'left' }),
     },
     {
-      tooltip: 'Align Center',
+      tooltip: 'Align Center (⌘⇧E)',
       icon: <AlignCenterOutlined />,
       onClick: () => editor.chain().focus().setTextAlign('center').run(),
       active: editor.isActive({ textAlign: 'center' }),
     },
     {
-      tooltip: 'Align Right',
+      tooltip: 'Align Right (⌘⇧R)',
       icon: <AlignRightOutlined />,
       onClick: () => editor.chain().focus().setTextAlign('right').run(),
       active: editor.isActive({ textAlign: 'right' }),

@@ -29,6 +29,54 @@ body {
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
+.ProseMirror p {
+  margin: 0.5em 0;
+}
+
+.ProseMirror h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 1em 0 0.5em;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 1em 0 0.5em;
+}
+
+.ProseMirror h3 {
+  font-size: 1.17em;
+  font-weight: bold;
+  margin: 1em 0 0.5em;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+.ProseMirror li {
+  margin: 0.2em 0;
+}
+
+.ProseMirror li p {
+  margin: 0;
+}
+
+.ProseMirror [data-text-align='center'] {
+  text-align: center;
+}
+
+.ProseMirror [data-text-align='right'] {
+  text-align: right;
+}
+
+.ProseMirror [data-text-align='justify'] {
+  text-align: justify;
+}
+
 .dark .ant-input {
   background-color: rgb(31, 41, 55);
   color: rgb(229, 231, 235);
