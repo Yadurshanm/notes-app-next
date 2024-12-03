@@ -7,7 +7,7 @@ import { SupabaseIcon } from './SupabaseIcon'
 import { useTheme } from '@/contexts/ThemeContext'
 
 
-function ConnectionStatus() {
+export function ConnectionStatus() {
   const [status, setStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
   const [error, setError] = useState<string | null>(null)
 
@@ -70,5 +70,5 @@ function ConnectionStatus() {
   )
 }
 
-export default ConnectionStatus;
+
 
