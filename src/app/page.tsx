@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { Button, Input, Layout, message, Tooltip } from 'antd'
+import { Button, Input, message, Tooltip } from 'antd'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
 import {
@@ -16,8 +16,7 @@ import { supabase } from '@/lib/supabase'
 import { Note } from '@/types'
 import NotesList from '@/components/NotesList'
 import Editor from '@/components/Editor'
-
-const { Header, Sider, Content } = Layout
+import { AppLayout } from '@/components/AppLayout'
 
 export default function Home() {
   const [notes, setNotes] = useState<Note[]>([])
@@ -209,68 +208,68 @@ export default function Home() {
     )
   }
 
-  return (
-    <Layout className="h-screen">
-      <Sider 
-        width={300} 
-        className={`border-r ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
-      >
-        <div className="flex flex-col h-full">
-          <div className="p-4 space-y-4 flex-none">
-            <div className="flex items-center justify-between gap-2">
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={createNote}
-                className="flex-1"
-              >
-                New Note
-                <span className="ml-1 text-xs opacity-70">(⌘N)</span>
-              </Button>
-              <Tooltip title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
-                <Button
-                  icon={isDarkMode ? <BulbFilled /> : <BulbOutlined />}
-                  onClick={toggleTheme}
-                />
-              </Tooltip>
-            </div>
-            <div className="flex items-center justify-between">
-              <ConnectionStatus />
-            </div>
-            <Input
-              ref={searchInputRef}
-              placeholder="Search notes... (⌘K)"
-              prefix={<SearchOutlined className="text-gray-400" />}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              allowClear
-              className={`${isDarkMode ? 'bg-gray-800 text-white' : ''}`}
+  const sidebar = (
+    <div className="flex flex-col h-full">
+      <div className="p-4 space-y-4 flex-none">
+        <div className="flex items-center justify-between gap-2">
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={createNote}
+            className="flex-1"
+          >
+            New Note
+            <span className="ml-1 text-xs opacity-70">(⌘N)</span>
+          </Button>
+          <Tooltip title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
+            <Button
+              icon={isDarkMode ? <BulbFilled /> : <BulbOutlined />}
+              onClick={toggleTheme}
             />
-          </div>
-          <div className="flex-1 overflow-hidden">
-            <NotesList
+          </Tooltip>
+        </div>
+        <div className="flex items-center justify-between">
+          <ConnectionStatus />
+        </div>
+        <Input
+          ref={searchInputRef}
+          placeholder="Search notes... (⌘K)"
+          prefix={<SearchOutlined className="text-gray-400" />}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          allowClear
+          className={`${isDarkMode ? 'bg-gray-800 text-white' : ''}`}
+        />
+      </div>
+      <div className="flex-1 overflow-hidden">
+        <NotesList
           notes={filteredNotes}
           selectedNoteId={selectedNote?.id || null}
           onSelectNote={handleNoteSelect}
           onDeleteNote={deleteNote}
         />
-      </Sider>
-      <Layout>
-        <Header className={`p-4 border-b ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
-          <Input
-            placeholder="Note title"
-            value={title}
-            onChange={handleTitleChange}
-            className="text-xl"
-          />
-        </Header>
-        <Content className="p-4">
-          <Editor content={content} onChange={handleContentChange} />
-          <div className="mt-4 text-sm text-gray-500">
-            Press ⌘S to save • Last saved: {new Date().toLocaleTimeString()}
-          </div>
-        </Content>
-      </Layout>
-    </Layout>
+      </div>
+    </div>
   )
+
+  const content = (
+    <>
+      <div className={`p-4 border-b ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+        <Input
+          placeholder="Note title"
+          value={title}
+          onChange={handleTitleChange}
+          className={`text-xl ${isDarkMode ? 'bg-gray-800 text-white' : ''}`}
+        />
+      </div>
+      <div className="flex-1 p-4 overflow-auto">
+        <Editor content={content} onChange={handleContentChange} />
+        <div className={`mt-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+          Press ⌘S to save • Last saved: {new Date().toLocaleTimeString()}
+        </div>
+      </div>
+    </>
+  )
+
+  return <AppLayout sidebar={sidebar} content={content} />
 }
