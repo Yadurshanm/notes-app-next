@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Button, Input, Layout, message } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import { supabase } from '@/lib/supabase'
 import { Note } from '@/types'
 import NotesList from '@/components/NotesList'
@@ -16,6 +16,7 @@ export default function Home() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     fetchNotes()
@@ -83,10 +84,40 @@ export default function Home() {
     setContent(note.content)
   }
 
+  const deleteNote = async (noteId: string) => {
+    try {
+      const { error } = await supabase
+        .from('notes')
+        .delete()
+        .eq('id', noteId)
+
+      if (error) throw error
+
+      setNotes(notes.filter(note => note.id !== noteId))
+      if (selectedNote?.id === noteId) {
+        setSelectedNote(null)
+        setTitle('')
+        setContent('')
+      }
+      message.success('Note deleted')
+    } catch (error) {
+      message.error('Error deleting note')
+    }
+  }
+
+  const filteredNotes = useMemo(() => {
+    if (!searchQuery) return notes
+    const query = searchQuery.toLowerCase()
+    return notes.filter(note =>
+      note.title.toLowerCase().includes(query) ||
+      note.content.toLowerCase().replace(/<[^>]*>/g, '').includes(query)
+    )
+  }, [notes, searchQuery])
+
   return (
     <Layout className="h-screen">
       <Sider width={300} className="bg-white border-r">
-        <div className="p-4">
+        <div className="p-4 space-y-4">
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -95,11 +126,19 @@ export default function Home() {
           >
             New Note
           </Button>
+          <Input
+            placeholder="Search notes..."
+            prefix={<SearchOutlined />}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            allowClear
+          />
         </div>
         <NotesList
-          notes={notes}
+          notes={filteredNotes}
           selectedNoteId={selectedNote?.id || null}
           onSelectNote={handleNoteSelect}
+          onDeleteNote={deleteNote}
         />
       </Sider>
       <Layout>
