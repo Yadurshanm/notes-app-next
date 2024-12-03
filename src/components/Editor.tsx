@@ -23,6 +23,12 @@ import {
   AlignRightOutlined,
   RedoOutlined,
   UndoOutlined,
+  HighlightOutlined,
+  CheckSquareOutlined,
+  LinkOutlined,
+  VerticalAlignTopOutlined,
+  VerticalAlignBottomOutlined,
+  HeadingOutlined,
 } from '@ant-design/icons'
 
 interface EditorProps {
@@ -39,7 +45,7 @@ export function Editor({ content, onChange }: EditorProps) {
   }, [])
 
   const editor = useEditor(
-    {
+    !isMounted ? null : {
       extensions: [
         StarterKit.configure({
           bulletList: {
@@ -280,7 +286,7 @@ export function Editor({ content, onChange }: EditorProps) {
   ] : []
 
   return (
-    <div className="prose max-w-none w-full" ref={ref}>
+    <div className="prose max-w-none w-full">
       <Space wrap className={`mb-4 p-2 border rounded-md ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
         {editorButtons.map((button, index) => (
           <Tooltip key={index} title={button.tooltip}>
