@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { Button, Input, message, Tooltip } from 'antd'
+import { Button, Input, message, Tooltip, ConfigProvider } from 'antd'
 import type { InputRef } from 'antd/es/input'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
@@ -322,5 +322,23 @@ export default function Home() {
     </>
   )
 
-  return <AppLayout sidebar={sidebar} content={content} />
+  return (
+    <ConfigProvider
+      theme={{
+        components: {
+          Button: {
+            algorithm: true,
+          },
+          Input: {
+            algorithm: true,
+          },
+          Tooltip: {
+            algorithm: true,
+          },
+        },
+      }}
+    >
+      <AppLayout sidebar={sidebar} content={content} />
+    </ConfigProvider>
+  )
 }

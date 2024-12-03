@@ -64,6 +64,17 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       <ConfigProvider
         theme={{
           algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+          components: {
+            Button: {
+              algorithm: true,
+            },
+            Input: {
+              algorithm: true,
+            },
+            Tooltip: {
+              algorithm: true,
+            },
+          },
         }}
       >
         {children}

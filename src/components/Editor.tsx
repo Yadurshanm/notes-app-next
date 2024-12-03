@@ -198,11 +198,12 @@ export function Editor({ content, onChange }: EditorProps) {
 
   return (
     <div className={`prose max-w-none w-full ${isDarkMode ? 'prose-invert' : ''}`}>
-      <Space wrap className={`mb-4 p-2 border rounded-md ${
+      <div className={`mb-4 p-2 border rounded-md ${
         isDarkMode 
           ? 'bg-gray-800 border-gray-700' 
           : 'bg-white border-gray-200'
       }`}>
+        <Space wrap>
         {editorButtons.map((button, index) => (
           <Tooltip key={index} title={button.tooltip}>
             <Button
@@ -214,7 +215,8 @@ export function Editor({ content, onChange }: EditorProps) {
             />
           </Tooltip>
         ))}
-      </Space>
+        </Space>
+      </div>
       <EditorContent 
         editor={editor} 
         className={`min-h-[200px] border rounded-md p-4 ${
