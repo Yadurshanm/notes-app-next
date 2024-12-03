@@ -1,5 +1,6 @@
 'use client'
 
+import { NextUIProvider } from '@nextui-org/react'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { ReactNode } from 'react'
 
@@ -9,10 +10,12 @@ interface ProvidersProps {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <div className="min-h-screen">
+    <NextUIProvider>
       <ThemeProvider>
-        {children}
+        <div className="min-h-screen">
+          {children}
+        </div>
       </ThemeProvider>
-    </div>
+    </NextUIProvider>
   )
 }

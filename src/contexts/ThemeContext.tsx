@@ -1,7 +1,6 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { ConfigProvider, theme } from 'antd'
 
 interface ThemeContextType {
   isDarkMode: boolean
@@ -61,24 +60,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   return (
     <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-      <ConfigProvider
-        theme={{
-          algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
-          components: {
-            Button: {
-              algorithm: true,
-            },
-            Input: {
-              algorithm: true,
-            },
-            Tooltip: {
-              algorithm: true,
-            },
-          },
-        }}
-      >
+      <div className={isDarkMode ? 'dark' : 'light'}>
         {children}
-      </ConfigProvider>
+      </div>
     </ThemeContext.Provider>
   )
 }
