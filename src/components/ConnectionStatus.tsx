@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Tooltip } from 'antd'
 import { supabase } from '@/lib/supabase'
 import { SupabaseIcon } from './SupabaseIcon'
+import { useTheme } from '@/contexts/ThemeContext'
 
 export function ConnectionStatus() {
   const [status, setStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')

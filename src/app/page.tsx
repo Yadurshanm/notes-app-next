@@ -248,7 +248,7 @@ export default function Home() {
           onDeleteNote={deleteNote}
         />
       </div>
-      <div className="p-2 border-t flex items-center justify-between text-xs">
+      <div className={`p-2 border-t flex items-center justify-between text-xs ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}`}>
         <ConnectionStatus />
         <Version />
       </div>
