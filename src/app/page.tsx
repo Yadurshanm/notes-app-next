@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { Button, Input, Layout, message, Tooltip } from 'antd'
+import { Button, Input, Layout, message, Tooltip, Spin } from 'antd'
 import {
   PlusOutlined,
   SearchOutlined,
@@ -23,6 +23,7 @@ export default function Home() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const { isDarkMode, toggleTheme } = useTheme()
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -40,6 +41,7 @@ export default function Home() {
 
   const fetchNotes = async () => {
     try {
+      setError(null)
       const { data, error } = await supabase
         .from('notes')
         .select('*')
@@ -48,7 +50,9 @@ export default function Home() {
       if (error) throw error
       setNotes(data || [])
     } catch (error) {
-      message.error('Error fetching notes')
+      const errorMessage = error instanceof Error ? error.message : 'Error fetching notes'
+      setError(errorMessage)
+      message.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -73,19 +77,31 @@ export default function Home() {
     }
   }
 
-  const updateNote = async () => {
+  const updateNote = async (noteTitle?: string, noteContent?: string) => {
     if (!selectedNote) return
+
+    const updatedTitle = noteTitle ?? title
+    const updatedContent = noteContent ?? content
 
     try {
       const { error } = await supabase
         .from('notes')
-        .update({ title, content })
+        .update({ 
+          title: updatedTitle, 
+          content: updatedContent,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', selectedNote.id)
 
       if (error) throw error
 
       const updatedNotes = notes.map((note) =>
-        note.id === selectedNote.id ? { ...note, title, content } : note
+        note.id === selectedNote.id ? { 
+          ...note, 
+          title: updatedTitle, 
+          content: updatedContent,
+          updated_at: new Date().toISOString()
+        } : note
       )
       setNotes(updatedNotes)
       message.success('Note saved')
@@ -152,6 +168,23 @@ export default function Home() {
       note.content.toLowerCase().replace(/<[^>]*>/g, '').includes(query)
     )
   }, [notes, searchQuery])
+
+  if (loading || error) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        {loading ? (
+          <Spin size="large" tip="Loading notes..." />
+        ) : (
+          <div className="text-center">
+            <p className="text-red-500 mb-4">{error}</p>
+            <Button type="primary" onClick={fetchNotes}>
+              Retry
+            </Button>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <Layout className="h-screen">

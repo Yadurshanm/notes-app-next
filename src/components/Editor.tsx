@@ -1,5 +1,7 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import TextAlign from '@tiptap/extension-text-align'
+import Underline from '@tiptap/extension-underline'
 import { useEffect } from 'react'
 import { Button, Space, Tooltip } from 'antd'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -25,7 +27,13 @@ interface EditorProps {
 export default function Editor({ content, onChange }: EditorProps) {
   const { isDarkMode } = useTheme()
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      Underline,
+    ],
     content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
