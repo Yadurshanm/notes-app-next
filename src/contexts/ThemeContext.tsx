@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { ConfigProvider, theme } from 'antd'
 
 interface ThemeContextType {
@@ -14,23 +14,30 @@ const ThemeContext = createContext<ThemeContextType>({
 })
 
 export function useTheme() {
-  return useContext(ThemeContext)
+  const context = useContext(ThemeContext)
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider')
+  }
+  return context
 }
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+interface ThemeProviderProps {
+  children: ReactNode
+}
+
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  const [mounted, setMounted] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
 
   useEffect(() => {
-    // Check if we're in the browser
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme')
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      setIsDarkMode(savedTheme === 'dark' || (!savedTheme && prefersDark))
-    }
+    setMounted(true)
+    const savedTheme = localStorage.getItem('theme')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    setIsDarkMode(savedTheme === 'dark' || (!savedTheme && prefersDark))
   }, [])
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (mounted) {
       localStorage.setItem('theme', isDarkMode ? 'dark' : 'light')
       if (isDarkMode) {
         document.documentElement.classList.add('dark')
@@ -38,10 +45,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         document.documentElement.classList.remove('dark')
       }
     }
-  }, [isDarkMode])
+  }, [isDarkMode, mounted])
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode)
+  }
+
+  if (!mounted) {
+    return null
   }
 
   return (
