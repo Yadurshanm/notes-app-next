@@ -16,8 +16,8 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { supabase } from '@/lib/supabase'
 import { Note } from '@/types'
-import NotesList from '@/components/NotesList'
-import Editor from '@/components/Editor'
+import { NotesList } from '@/components/NotesList'
+import { Editor } from '@/components/Editor'
 import { AppLayout } from '@/components/AppLayout'
 
 export default function Home() {

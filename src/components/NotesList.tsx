@@ -2,7 +2,7 @@ import { List, Popconfirm } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 import { Note } from '@/types'
 import { useTheme } from '@/contexts/ThemeContext'
-import { forwardRef } from 'react'
+
 
 interface NotesListProps {
   notes: Note[]

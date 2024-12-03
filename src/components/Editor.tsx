@@ -8,7 +8,7 @@ import TaskItem from '@tiptap/extension-task-item'
 import Superscript from '@tiptap/extension-superscript'
 import Subscript from '@tiptap/extension-subscript'
 import Link from '@tiptap/extension-link'
-import { useEffect, useState, forwardRef } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Space, Tooltip } from 'antd'
 import { useTheme } from '@/contexts/ThemeContext'
 import {
