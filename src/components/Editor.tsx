@@ -61,7 +61,8 @@ export default function Editor({ content, onChange }: EditorProps) {
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
     },
-  })
+    enableCoreExtensions: true,
+  }, [isMounted])
 
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
@@ -70,82 +71,93 @@ export default function Editor({ content, onChange }: EditorProps) {
   }, [content, editor])
 
   if (!isMounted || !editor) {
-    return <div className="min-h-[200px] border rounded-md p-4 bg-gray-50" />
+    return (
+      <div className={`min-h-[200px] border rounded-md p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+        <div className="animate-pulse space-y-3">
+          <div className="h-4 bg-gray-200 rounded w-3/4" />
+          <div className="h-4 bg-gray-200 rounded w-1/2" />
+          <div className="h-4 bg-gray-200 rounded w-5/6" />
+        </div>
+      </div>
+    )
   }
+
+  const editorButtons = [
+    {
+      tooltip: 'Undo (⌘Z)',
+      icon: <UndoOutlined />,
+      onClick: () => editor.chain().focus().undo().run(),
+      disabled: !editor.can().undo(),
+    },
+    {
+      tooltip: 'Redo',
+      icon: <RedoOutlined />,
+      onClick: () => editor.chain().focus().redo().run(),
+      disabled: !editor.can().redo(),
+    },
+    {
+      tooltip: 'Bold',
+      icon: <BoldOutlined />,
+      onClick: () => editor.chain().focus().toggleBold().run(),
+      active: editor.isActive('bold'),
+    },
+    {
+      tooltip: 'Italic',
+      icon: <ItalicOutlined />,
+      onClick: () => editor.chain().focus().toggleItalic().run(),
+      active: editor.isActive('italic'),
+    },
+    {
+      tooltip: 'Strike',
+      icon: <StrikethroughOutlined />,
+      onClick: () => editor.chain().focus().toggleStrike().run(),
+      active: editor.isActive('strike'),
+    },
+    {
+      tooltip: 'Bullet List',
+      icon: <UnorderedListOutlined />,
+      onClick: () => editor.chain().focus().toggleBulletList().run(),
+      active: editor.isActive('bulletList'),
+    },
+    {
+      tooltip: 'Ordered List',
+      icon: <OrderedListOutlined />,
+      onClick: () => editor.chain().focus().toggleOrderedList().run(),
+      active: editor.isActive('orderedList'),
+    },
+    {
+      tooltip: 'Align Left',
+      icon: <AlignLeftOutlined />,
+      onClick: () => editor.chain().focus().setTextAlign('left').run(),
+      active: editor.isActive({ textAlign: 'left' }),
+    },
+    {
+      tooltip: 'Align Center',
+      icon: <AlignCenterOutlined />,
+      onClick: () => editor.chain().focus().setTextAlign('center').run(),
+      active: editor.isActive({ textAlign: 'center' }),
+    },
+    {
+      tooltip: 'Align Right',
+      icon: <AlignRightOutlined />,
+      onClick: () => editor.chain().focus().setTextAlign('right').run(),
+      active: editor.isActive({ textAlign: 'right' }),
+    },
+  ]
 
   return (
     <div className="prose max-w-none w-full">
       <Space wrap className={`mb-4 p-2 border rounded-md ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
-        <Tooltip title="Undo (⌘Z)">
-          <Button
-            icon={<UndoOutlined />}
-            onClick={() => editor.chain().focus().undo().run()}
-            disabled={!editor.can().undo()}
-          />
-        </Tooltip>
-        <Tooltip title="Redo">
-          <Button
-            icon={<RedoOutlined />}
-            onClick={() => editor.chain().focus().redo().run()}
-            disabled={!editor.can().redo()}
-          />
-        </Tooltip>
-        <Tooltip title="Bold">
-          <Button
-            icon={<BoldOutlined />}
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            type={editor.isActive('bold') ? 'primary' : 'default'}
-          />
-        </Tooltip>
-        <Tooltip title="Italic">
-          <Button
-            icon={<ItalicOutlined />}
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            type={editor.isActive('italic') ? 'primary' : 'default'}
-          />
-        </Tooltip>
-        <Tooltip title="Strike">
-          <Button
-            icon={<StrikethroughOutlined />}
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-            type={editor.isActive('strike') ? 'primary' : 'default'}
-          />
-        </Tooltip>
-        <Tooltip title="Bullet List">
-          <Button
-            icon={<UnorderedListOutlined />}
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            type={editor.isActive('bulletList') ? 'primary' : 'default'}
-          />
-        </Tooltip>
-        <Tooltip title="Ordered List">
-          <Button
-            icon={<OrderedListOutlined />}
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            type={editor.isActive('orderedList') ? 'primary' : 'default'}
-          />
-        </Tooltip>
-        <Tooltip title="Align Left">
-          <Button
-            icon={<AlignLeftOutlined />}
-            onClick={() => editor.chain().focus().setTextAlign('left').run()}
-            type={editor.isActive({ textAlign: 'left' }) ? 'primary' : 'default'}
-          />
-        </Tooltip>
-        <Tooltip title="Align Center">
-          <Button
-            icon={<AlignCenterOutlined />}
-            onClick={() => editor.chain().focus().setTextAlign('center').run()}
-            type={editor.isActive({ textAlign: 'center' }) ? 'primary' : 'default'}
-          />
-        </Tooltip>
-        <Tooltip title="Align Right">
-          <Button
-            icon={<AlignRightOutlined />}
-            onClick={() => editor.chain().focus().setTextAlign('right').run()}
-            type={editor.isActive({ textAlign: 'right' }) ? 'primary' : 'default'}
-          />
-        </Tooltip>
+        {editorButtons.map((button, index) => (
+          <Tooltip key={index} title={button.tooltip}>
+            <Button
+              icon={button.icon}
+              onClick={button.onClick}
+              disabled={button.disabled}
+              type={button.active ? 'primary' : 'default'}
+            />
+          </Tooltip>
+        ))}
       </Space>
       <EditorContent editor={editor} className="min-h-[200px] border rounded-md p-4" />
     </div>
