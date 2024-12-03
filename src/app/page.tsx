@@ -5,8 +5,7 @@ import { Button, Input, Tooltip } from '@nextui-org/react'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
 import { Version } from '@/components/Version'
-import { useToast } from '@/hooks/useToast'
-import { Toaster } from 'sonner'
+import { toast } from 'sonner'
 import {
   Plus,
   Search,
@@ -86,7 +85,7 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error creating note:', error)
-      message.error('Error creating note')
+      toast.error('Error creating note')
     }
   }
 
@@ -332,10 +331,5 @@ export default function Home() {
     </>
   )
 
-  return (
-    <>
-      <AppLayout sidebar={sidebar} content={content} />
-      <Toaster richColors />
-    </>
-  )
+  return <AppLayout sidebar={sidebar} content={content} />
 }
