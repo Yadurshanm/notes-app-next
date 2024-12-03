@@ -2,7 +2,7 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Space, Tooltip } from 'antd'
 import { useTheme } from '@/contexts/ThemeContext'
 import {
@@ -26,6 +26,12 @@ interface EditorProps {
 
 export default function Editor({ content, onChange }: EditorProps) {
   const { isDarkMode } = useTheme()
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -34,6 +40,14 @@ export default function Editor({ content, onChange }: EditorProps) {
       }),
       Underline,
     ],
+    editorProps: {
+      attributes: {
+        class: 'prose max-w-none w-full focus:outline-none',
+      },
+    },
+    onCreate: ({ editor }) => {
+      editor.setOptions({ immediateRender: false })
+    },
     content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
@@ -46,8 +60,8 @@ export default function Editor({ content, onChange }: EditorProps) {
     }
   }, [content, editor])
 
-  if (!editor) {
-    return null
+  if (!isMounted || !editor) {
+    return <div className="min-h-[200px] border rounded-md p-4 bg-gray-50" />
   }
 
   return (

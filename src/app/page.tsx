@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { Button, Input, Layout, message, Tooltip, Spin } from 'antd'
+import { Button, Input, Layout, message, Tooltip } from 'antd'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 import {
   PlusOutlined,
   SearchOutlined,
@@ -105,9 +106,12 @@ export default function Home() {
   }
 
   const handleNoteSelect = (note: Note) => {
-    setSelectedNote(note)
-    setTitle(note.title)
-    setContent(note.content)
+    // Use a single state update to prevent race conditions
+    requestAnimationFrame(() => {
+      setSelectedNote(note)
+      setTitle(note.title)
+      setContent(note.content)
+    })
   }
 
   const debouncedSave = (noteTitle: string, noteContent: string) => {
@@ -173,7 +177,7 @@ export default function Home() {
     return (
       <div className="h-screen flex items-center justify-center">
         {loading ? (
-          <Spin size="large" tip="Loading notes..." />
+          <LoadingSpinner message="Loading notes..." />
         ) : (
           <div className="text-center">
             <p className="text-red-500 mb-4">{error}</p>
