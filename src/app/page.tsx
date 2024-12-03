@@ -31,9 +31,14 @@ export default function Home() {
   const { isDarkMode, toggleTheme } = useTheme()
   const searchInputRef = useRef<InputRef>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout>()
+  const createTimeoutRef = useRef<NodeJS.Timeout>()
 
   useEffect(() => {
     fetchNotes()
+    return () => {
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
+      if (createTimeoutRef.current) clearTimeout(createTimeoutRef.current)
+    }
   }, [])
 
   const fetchNotes = async () => {
@@ -146,15 +151,58 @@ export default function Home() {
     }
   }
 
+  const debouncedCreate = async (noteTitle: string, noteContent: string) => {
+    if (createTimeoutRef.current) {
+      clearTimeout(createTimeoutRef.current)
+    }
+
+    createTimeoutRef.current = setTimeout(async () => {
+      try {
+        const newNote = {
+          title: noteTitle,
+          content: noteContent,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+
+        const { data, error } = await supabase
+          .from('notes')
+          .insert([newNote])
+          .select('*')
+          .single()
+
+        if (error) throw error
+        if (data) {
+          setNotes([data, ...notes])
+          setSelectedNote(data)
+          message.success('Note created')
+        }
+      } catch (error) {
+        console.error('Error creating note:', error)
+        message.error('Error creating note')
+      }
+    }, 1000)
+  }
+
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value
     setTitle(newTitle)
-    debouncedSave(newTitle, noteContent)
+    
+    if (!selectedNote && (newTitle || noteContent)) {
+      debouncedCreate(newTitle, noteContent)
+    } else {
+      debouncedSave(newTitle, noteContent)
+    }
   }
 
   const handleContentChange = (newContent: string) => {
     setNoteContent(newContent)
-    debouncedSave(title, newContent)
+    
+    if (!selectedNote && (title || newContent)) {
+      debouncedCreate(title, newContent)
+    } else {
+      debouncedSave(title, newContent)
+    }
   }
 
   const deleteNote = async (noteId: string) => {
