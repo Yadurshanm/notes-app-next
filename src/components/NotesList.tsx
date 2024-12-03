@@ -16,10 +16,11 @@ export default function NotesList({ notes, selectedNoteId, onSelectNote, onDelet
     <List
       className="h-full overflow-auto"
       dataSource={notes}
+      split={false}
       renderItem={(note) => (
         <List.Item
           className={`
-            transition-colors duration-150 py-3 border-0 border-b
+            transition-colors duration-150 py-3 border-0 mb-1 rounded
             ${isDarkMode
               ? `hover:bg-gray-800 ${selectedNoteId === note.id ? 'bg-gray-700' : ''}`
               : `hover:bg-gray-100 ${selectedNoteId === note.id ? 'bg-gray-200' : ''}`

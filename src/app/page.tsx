@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { Button, Input, message, Tooltip } from 'antd'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
+import { Version } from '@/components/Version'
 import {
   PlusOutlined,
   SearchOutlined,
@@ -228,9 +229,6 @@ export default function Home() {
             />
           </Tooltip>
         </div>
-        <div className="flex items-center justify-between">
-          <ConnectionStatus />
-        </div>
         <Input
           ref={searchInputRef}
           placeholder="Search notes... (⌘K)"
@@ -248,6 +246,10 @@ export default function Home() {
           onSelectNote={handleNoteSelect}
           onDeleteNote={deleteNote}
         />
+      </div>
+      <div className="p-2 border-t flex items-center justify-between text-xs">
+        <ConnectionStatus />
+        <Version />
       </div>
     </div>
   )

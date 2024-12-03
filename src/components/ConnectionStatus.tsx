@@ -51,15 +51,15 @@ export function ConnectionStatus() {
 
   return (
     <Tooltip title={error || statusText[status]}>
-      <div className="flex items-center gap-2 cursor-help">
+      <div className="flex items-center gap-1.5 cursor-help">
         <SupabaseIcon className={`
-          transition-colors duration-200
+          w-3.5 h-3.5 transition-colors duration-200
           ${status === 'connected' ? 'text-green-500' : ''}
           ${status === 'connecting' ? 'text-blue-500' : ''}
           ${status === 'error' ? 'text-red-500' : ''}
         `} />
-        <span className={`text-sm ${status === 'error' ? 'text-red-500' : 'text-gray-500'}`}>
-          {statusText[status]}
+        <span className={`${status === 'error' ? 'text-red-500' : isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+          {status === 'connected' ? 'Connected' : status === 'connecting' ? 'Connecting...' : 'Error'}
         </span>
       </div>
     </Tooltip>
