@@ -19,15 +19,24 @@ export default function NotesList({ notes, selectedNoteId, onSelectNote, onDelet
       renderItem={(note) => (
         <List.Item
           className={`
-            transition-colors duration-150
+            transition-colors duration-150 px-4 py-2
             ${isDarkMode
               ? `hover:bg-gray-800 ${selectedNoteId === note.id ? 'bg-gray-700' : ''}`
               : `hover:bg-gray-100 ${selectedNoteId === note.id ? 'bg-gray-200' : ''}`
             }
           `}
-          actions={[
+          onClick={() => onSelectNote(note)}
+        >
+          <div className="flex items-center w-full gap-3">
+            <div className="flex-1 min-w-0">
+              <h3 className={`font-medium truncate ${isDarkMode ? 'text-white' : ''}`}>
+                {note.title || 'Untitled'}
+              </h3>
+              <p className={`truncate text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                {note.content.replace(/<[^>]*>/g, '').slice(0, 100)}
+              </p>
+            </div>
             <Popconfirm
-              key="delete"
               title="Delete note"
               description="Are you sure you want to delete this note?"
               onConfirm={(e) => {
@@ -38,24 +47,12 @@ export default function NotesList({ notes, selectedNoteId, onSelectNote, onDelet
             >
               <DeleteOutlined
                 className={`
-                  transition-colors duration-150
+                  transition-colors duration-150 text-lg
                   ${isDarkMode ? 'text-red-400 hover:text-red-300' : 'text-red-500 hover:text-red-700'}
                 `}
                 onClick={(e) => e.stopPropagation()}
               />
             </Popconfirm>
-          ]}
-        >
-          <div 
-            className="w-full cursor-pointer" 
-            onClick={() => onSelectNote(note)}
-          >
-            <h3 className={`font-medium ${isDarkMode ? 'text-white' : ''}`}>
-              {note.title || 'Untitled'}
-            </h3>
-            <p className={`truncate text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              {note.content.replace(/<[^>]*>/g, '').slice(0, 100)}
-            </p>
           </div>
         </List.Item>
       )}

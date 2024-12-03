@@ -36,3 +36,32 @@ body {
 .dark .ant-list-item {
   border-color: rgb(55, 65, 81);
 }
+
+.ProseMirror {
+  min-height: 200px;
+  padding: 1rem;
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+}
+
+.ProseMirror ul[data-type="taskList"] {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.dark .ProseMirror ul,
+.dark .ProseMirror ol {
+  color: rgb(229, 231, 235);
+}
