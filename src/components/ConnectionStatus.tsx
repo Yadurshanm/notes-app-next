@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Badge, Tooltip } from 'antd'
+import { Tooltip } from 'antd'
 import { supabase } from '@/lib/supabase'
+import { SupabaseIcon } from './SupabaseIcon'
 
 export function ConnectionStatus() {
   const [status, setStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
@@ -50,11 +51,17 @@ export function ConnectionStatus() {
 
   return (
     <Tooltip title={error || statusText[status]}>
-      <Badge
-        status={statusColors[status] as any}
-        text={statusText[status]}
-        className="cursor-help"
-      />
+      <div className="flex items-center gap-2 cursor-help">
+        <SupabaseIcon className={`
+          transition-colors duration-200
+          ${status === 'connected' ? 'text-green-500' : ''}
+          ${status === 'connecting' ? 'text-blue-500' : ''}
+          ${status === 'error' ? 'text-red-500' : ''}
+        `} />
+        <span className={`text-sm ${status === 'error' ? 'text-red-500' : 'text-gray-500'}`}>
+          {statusText[status]}
+        </span>
+      </div>
     </Tooltip>
   )
 }

@@ -18,11 +18,13 @@ export default function NotesList({ notes, selectedNoteId, onSelectNote, onDelet
       dataSource={notes}
       renderItem={(note) => (
         <List.Item
-          className={`${
-            isDarkMode
+          className={`
+            transition-colors duration-150
+            ${isDarkMode
               ? `hover:bg-gray-800 ${selectedNoteId === note.id ? 'bg-gray-700' : ''}`
               : `hover:bg-gray-100 ${selectedNoteId === note.id ? 'bg-gray-200' : ''}`
-          }`}
+            }
+          `}
           actions={[
             <Popconfirm
               key="delete"
@@ -35,15 +37,23 @@ export default function NotesList({ notes, selectedNoteId, onSelectNote, onDelet
               onCancel={(e) => e?.stopPropagation()}
             >
               <DeleteOutlined
-                className="text-red-500 hover:text-red-700"
+                className={`
+                  transition-colors duration-150
+                  ${isDarkMode ? 'text-red-400 hover:text-red-300' : 'text-red-500 hover:text-red-700'}
+                `}
                 onClick={(e) => e.stopPropagation()}
               />
             </Popconfirm>
           ]}
         >
-          <div className="w-full cursor-pointer" onClick={() => onSelectNote(note)}>
-            <h3 className="font-medium">{note.title || 'Untitled'}</h3>
-            <p className="text-gray-500 truncate">
+          <div 
+            className="w-full cursor-pointer" 
+            onClick={() => onSelectNote(note)}
+          >
+            <h3 className={`font-medium ${isDarkMode ? 'text-white' : ''}`}>
+              {note.title || 'Untitled'}
+            </h3>
+            <p className={`truncate text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
               {note.content.replace(/<[^>]*>/g, '').slice(0, 100)}
             </p>
           </div>

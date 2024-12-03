@@ -211,37 +211,44 @@ export default function Home() {
 
   return (
     <Layout className="h-screen">
-      <Sider width={300} className={`border-r ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
-        <div className="p-4 space-y-4">
-          <div className="flex gap-2">
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={createNote}
-              className="flex-1"
-            >
-              New Note (⌘N)
-            </Button>
-            <Tooltip title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
+      <Sider 
+        width={300} 
+        className={`border-r ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+      >
+        <div className="flex flex-col h-full">
+          <div className="p-4 space-y-4 flex-none">
+            <div className="flex items-center justify-between gap-2">
               <Button
-                icon={isDarkMode ? <BulbFilled /> : <BulbOutlined />}
-                onClick={toggleTheme}
-              />
-            </Tooltip>
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={createNote}
+                className="flex-1"
+              >
+                New Note
+                <span className="ml-1 text-xs opacity-70">(⌘N)</span>
+              </Button>
+              <Tooltip title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
+                <Button
+                  icon={isDarkMode ? <BulbFilled /> : <BulbOutlined />}
+                  onClick={toggleTheme}
+                />
+              </Tooltip>
+            </div>
+            <div className="flex items-center justify-between">
+              <ConnectionStatus />
+            </div>
+            <Input
+              ref={searchInputRef}
+              placeholder="Search notes... (⌘K)"
+              prefix={<SearchOutlined className="text-gray-400" />}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              allowClear
+              className={`${isDarkMode ? 'bg-gray-800 text-white' : ''}`}
+            />
           </div>
-          <div className="py-2">
-            <ConnectionStatus />
-          </div>
-          <Input
-            ref={searchInputRef}
-            placeholder="Search notes... (⌘K)"
-            prefix={<SearchOutlined />}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            allowClear
-          />
-        </div>
-        <NotesList
+          <div className="flex-1 overflow-hidden">
+            <NotesList
           notes={filteredNotes}
           selectedNoteId={selectedNote?.id || null}
           onSelectNote={handleNoteSelect}
