@@ -90,42 +90,42 @@ export default function Editor({ content, onChange }: EditorProps) {
       enableInputRules: true,
       enablePasteRules: true,
       handleDOMEvents: {
-        keydown: (view, event) => {
+        keydown: (_, event) => {
           // Handle keyboard shortcuts
           if (event.metaKey || event.ctrlKey) {
             switch (event.key.toLowerCase()) {
               case 'u':
                 event.preventDefault()
-                editor.chain().focus().toggleUnderline().run()
+                editor?.chain().focus().toggleUnderline().run()
                 return true
               case 'h':
                 if (event.shiftKey) {
                   event.preventDefault()
-                  editor.chain().focus().toggleHighlight().run()
+                  editor?.chain().focus().toggleHighlight().run()
                   return true
                 }
                 break
               case '1':
                 if (event.altKey) {
                   event.preventDefault()
-                  editor.chain().focus().toggleHeading({ level: 1 }).run()
+                  editor?.chain().focus().toggleHeading({ level: 1 }).run()
                   return true
                 }
                 break
               case '9':
                 if (event.shiftKey) {
                   event.preventDefault()
-                  editor.chain().focus().toggleTaskList().run()
+                  editor?.chain().focus().toggleTaskList().run()
                   return true
                 }
                 break
               case '.':
                 event.preventDefault()
-                editor.chain().focus().toggleSuperscript().run()
+                editor?.chain().focus().toggleSuperscript().run()
                 return true
               case ',':
                 event.preventDefault()
-                editor.chain().focus().toggleSubscript().run()
+                editor?.chain().focus().toggleSubscript().run()
                 return true
             }
           }
@@ -175,115 +175,115 @@ export default function Editor({ content, onChange }: EditorProps) {
     )
   }
 
-  const editorButtons = [
+  const editorButtons = editor ? [
     {
       tooltip: 'Undo (⌘Z)',
       icon: <UndoOutlined />,
-      onClick: () => editor.chain().focus().undo().run(),
-      disabled: !editor.can().undo(),
+      onClick: () => editor?.chain().focus().undo().run(),
+      disabled: !editor?.can().undo(),
     },
     {
       tooltip: 'Redo (⌘⇧Z)',
       icon: <RedoOutlined />,
-      onClick: () => editor.chain().focus().redo().run(),
-      disabled: !editor.can().redo(),
+      onClick: () => editor?.chain().focus().redo().run(),
+      disabled: !editor?.can().redo(),
     },
     {
       tooltip: 'Bold (⌘B)',
       icon: <BoldOutlined />,
-      onClick: () => editor.chain().focus().toggleBold().run(),
-      active: editor.isActive('bold'),
+      onClick: () => editor?.chain().focus().toggleBold().run(),
+      active: editor?.isActive('bold'),
     },
     {
       tooltip: 'Italic (⌘I)',
       icon: <ItalicOutlined />,
-      onClick: () => editor.chain().focus().toggleItalic().run(),
-      active: editor.isActive('italic'),
+      onClick: () => editor?.chain().focus().toggleItalic().run(),
+      active: editor?.isActive('italic'),
     },
     {
       tooltip: 'Underline (⌘U)',
       icon: <UnderlineOutlined />,
-      onClick: () => editor.chain().focus().toggleUnderline().run(),
-      active: editor.isActive('underline'),
+      onClick: () => editor?.chain().focus().toggleUnderline().run(),
+      active: editor?.isActive('underline'),
     },
     {
       tooltip: 'Strike (⌘⇧X)',
       icon: <StrikethroughOutlined />,
-      onClick: () => editor.chain().focus().toggleStrike().run(),
-      active: editor.isActive('strike'),
+      onClick: () => editor?.chain().focus().toggleStrike().run(),
+      active: editor?.isActive('strike'),
     },
     {
       tooltip: 'Highlight (⌘⇧H)',
       icon: <HighlightOutlined />,
-      onClick: () => editor.chain().focus().toggleHighlight().run(),
-      active: editor.isActive('highlight'),
+      onClick: () => editor?.chain().focus().toggleHighlight().run(),
+      active: editor?.isActive('highlight'),
     },
     {
       tooltip: 'Heading 1 (⌘⌥1)',
       icon: <HeadingOutlined />,
-      onClick: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-      active: editor.isActive('heading', { level: 1 }),
+      onClick: () => editor?.chain().focus().toggleHeading({ level: 1 }).run(),
+      active: editor?.isActive('heading', { level: 1 }),
     },
     {
       tooltip: 'Bullet List (⌘⇧8)',
       icon: <UnorderedListOutlined />,
-      onClick: () => editor.chain().focus().toggleBulletList().run(),
-      active: editor.isActive('bulletList'),
+      onClick: () => editor?.chain().focus().toggleBulletList().run(),
+      active: editor?.isActive('bulletList'),
     },
     {
       tooltip: 'Ordered List (⌘⇧7)',
       icon: <OrderedListOutlined />,
-      onClick: () => editor.chain().focus().toggleOrderedList().run(),
-      active: editor.isActive('orderedList'),
+      onClick: () => editor?.chain().focus().toggleOrderedList().run(),
+      active: editor?.isActive('orderedList'),
     },
     {
       tooltip: 'Task List (⌘⇧9)',
       icon: <CheckSquareOutlined />,
-      onClick: () => editor.chain().focus().toggleTaskList().run(),
-      active: editor.isActive('taskList'),
+      onClick: () => editor?.chain().focus().toggleTaskList().run(),
+      active: editor?.isActive('taskList'),
     },
     {
       tooltip: 'Superscript (⌘.)',
       icon: <VerticalAlignTopOutlined />,
-      onClick: () => editor.chain().focus().toggleSuperscript().run(),
-      active: editor.isActive('superscript'),
+      onClick: () => editor?.chain().focus().toggleSuperscript().run(),
+      active: editor?.isActive('superscript'),
     },
     {
       tooltip: 'Subscript (⌘,)',
       icon: <VerticalAlignBottomOutlined />,
-      onClick: () => editor.chain().focus().toggleSubscript().run(),
-      active: editor.isActive('subscript'),
+      onClick: () => editor?.chain().focus().toggleSubscript().run(),
+      active: editor?.isActive('subscript'),
     },
     {
       tooltip: 'Link (⌘K)',
       icon: <LinkOutlined />,
       onClick: () => {
         const url = window.prompt('Enter URL')
-        if (url) {
+        if (url && editor) {
           editor.chain().focus().setLink({ href: url }).run()
         }
       },
-      active: editor.isActive('link'),
+      active: editor?.isActive('link'),
     },
     {
       tooltip: 'Align Left (⌘⇧L)',
       icon: <AlignLeftOutlined />,
-      onClick: () => editor.chain().focus().setTextAlign('left').run(),
-      active: editor.isActive({ textAlign: 'left' }),
+      onClick: () => editor?.chain().focus().setTextAlign('left').run(),
+      active: editor?.isActive({ textAlign: 'left' }),
     },
     {
       tooltip: 'Align Center (⌘⇧E)',
       icon: <AlignCenterOutlined />,
-      onClick: () => editor.chain().focus().setTextAlign('center').run(),
-      active: editor.isActive({ textAlign: 'center' }),
+      onClick: () => editor?.chain().focus().setTextAlign('center').run(),
+      active: editor?.isActive({ textAlign: 'center' }),
     },
     {
       tooltip: 'Align Right (⌘⇧R)',
       icon: <AlignRightOutlined />,
-      onClick: () => editor.chain().focus().setTextAlign('right').run(),
-      active: editor.isActive({ textAlign: 'right' }),
+      onClick: () => editor?.chain().focus().setTextAlign('right').run(),
+      active: editor?.isActive({ textAlign: 'right' }),
     },
-  ]
+  ] : []
 
   return (
     <div className="prose max-w-none w-full">
