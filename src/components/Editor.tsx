@@ -39,7 +39,7 @@ export function Editor({ content, onChange }: EditorProps) {
   }, [])
 
   const editor = useEditor(
-    !isMounted ? null : {
+    !isMounted ? undefined : {
       immediatelyRender: false,
     extensions: [
       StarterKit.configure({
