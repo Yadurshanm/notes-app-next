@@ -10,10 +10,12 @@ module.exports = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: 'none',
+          },
+        },
       },
     },
   },
@@ -21,8 +23,46 @@ module.exports = {
   plugins: [
     require('@tailwindcss/typography'),
     nextui({
+      prefix: "nextui",
+      addCommonColors: true,
+      defaultTheme: "light",
+      defaultExtendTheme: "light",
+      layout: {
+        spacingUnit: 4,
+        disabledOpacity: 0.5,
+        dividerWeight: "1px",
+        fontSize: {
+          tiny: "0.75rem",
+          small: "0.875rem",
+          medium: "1rem",
+          large: "1.125rem",
+        },
+        lineHeight: {
+          tiny: "1rem",
+          small: "1.25rem",
+          medium: "1.5rem",
+          large: "1.75rem",
+        },
+        radius: {
+          small: "8px",
+          medium: "12px",
+          large: "14px",
+        },
+        borderWidth: {
+          small: "1px",
+          medium: "2px",
+          large: "3px",
+        },
+      },
       themes: {
         light: {
+          layout: {
+            boxShadow: {
+              small: "0 0 5px 0 rgb(0 0 0 / 0.1)",
+              medium: "0 0 15px 0 rgb(0 0 0 / 0.1)",
+              large: "0 0 25px 0 rgb(0 0 0 / 0.1)",
+            },
+          },
           colors: {
             background: "#FFFFFF",
             foreground: "#11181C",
@@ -43,6 +83,13 @@ module.exports = {
           },
         },
         dark: {
+          layout: {
+            boxShadow: {
+              small: "0 0 5px 0 rgb(0 0 0 / 0.2)",
+              medium: "0 0 15px 0 rgb(0 0 0 / 0.2)",
+              large: "0 0 25px 0 rgb(0 0 0 / 0.2)",
+            },
+          },
           colors: {
             background: "#18181B",
             foreground: "#ECEDEE",
