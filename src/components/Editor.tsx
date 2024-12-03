@@ -9,7 +9,7 @@ import Superscript from '@tiptap/extension-superscript'
 import Subscript from '@tiptap/extension-subscript'
 import Link from '@tiptap/extension-link'
 import { useEffect, useState } from 'react'
-import { Button, Space, Tooltip } from 'antd'
+import { Button, ButtonGroup, Tooltip } from '@nextui-org/react'
 import { useTheme } from '@/contexts/ThemeContext'
 import {
   BoldOutlined,
@@ -102,18 +102,20 @@ export function Editor({ content, onChange }: EditorProps) {
   if (!isMounted || !editor) {
     return (
       <div className="prose max-w-none w-full">
-        <div className={`mb-4 p-2 border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
-          <div className="flex gap-2">
-            {[...Array(10)].map((_, i) => (
-              <div 
-                key={i} 
-                className={`w-8 h-8 rounded animate-pulse ${
-                  isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
-                }`} 
-              />
-            ))}
-          </div>
-        </div>
+        <ButtonGroup 
+          variant="flat" 
+          className="mb-4 p-2 gap-1 flex flex-wrap"
+        >
+          {[...Array(10)].map((_, i) => (
+            <Button
+              key={i}
+              isIconOnly
+              isDisabled
+              variant="flat"
+              className="min-w-unit-8 w-unit-8 h-unit-8 animate-pulse"
+            />
+          ))}
+        </ButtonGroup>
         <div className={`min-h-[200px] border rounded-md p-4 ${
           isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
         }`}>
@@ -198,25 +200,25 @@ export function Editor({ content, onChange }: EditorProps) {
 
   return (
     <div className={`prose max-w-none w-full ${isDarkMode ? 'prose-invert' : ''}`}>
-      <div className={`mb-4 p-2 border rounded-md ${
-        isDarkMode 
-          ? 'bg-gray-800 border-gray-700' 
-          : 'bg-white border-gray-200'
-      }`}>
-        <Space wrap>
+      <ButtonGroup 
+        variant="flat" 
+        className="mb-4 p-2 gap-1 flex flex-wrap"
+      >
         {editorButtons.map((button, index) => (
-          <Tooltip key={index} title={button.tooltip}>
+          <Tooltip key={index} content={button.tooltip}>
             <Button
-              icon={button.icon}
+              isIconOnly
               onClick={button.onClick}
-              disabled={button.disabled}
-              type={button.active ? 'primary' : 'default'}
-              className={isDarkMode ? 'border-gray-700' : ''}
-            />
+              isDisabled={button.disabled}
+              color={button.active ? "primary" : "default"}
+              variant={button.active ? "solid" : "flat"}
+              className="min-w-unit-8 w-unit-8 h-unit-8"
+            >
+              {button.icon}
+            </Button>
           </Tooltip>
         ))}
-        </Space>
-      </div>
+      </ButtonGroup>
       <EditorContent 
         editor={editor} 
         className={`min-h-[200px] border rounded-md p-4 ${
