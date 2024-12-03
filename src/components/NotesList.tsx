@@ -1,6 +1,7 @@
 import { List, Popconfirm } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 import { Note } from '@/types'
+import { useTheme } from '@/contexts/ThemeContext'
 
 interface NotesListProps {
   notes: Note[]
@@ -10,14 +11,17 @@ interface NotesListProps {
 }
 
 export default function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }: NotesListProps) {
+  const { isDarkMode } = useTheme()
   return (
     <List
       className="h-full overflow-auto"
       dataSource={notes}
       renderItem={(note) => (
         <List.Item
-          className={`hover:bg-gray-100 ${
-            selectedNoteId === note.id ? 'bg-gray-200' : ''
+          className={`${
+            isDarkMode
+              ? `hover:bg-gray-800 ${selectedNoteId === note.id ? 'bg-gray-700' : ''}`
+              : `hover:bg-gray-100 ${selectedNoteId === note.id ? 'bg-gray-200' : ''}`
           }`}
           actions={[
             <Popconfirm

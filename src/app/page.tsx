@@ -1,8 +1,15 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import { Button, Input, Layout, message } from 'antd'
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
+import { useState, useEffect, useMemo, useRef } from 'react'
+import { Button, Input, Layout, message, Tooltip } from 'antd'
+import {
+  PlusOutlined,
+  SearchOutlined,
+  BulbOutlined,
+  BulbFilled,
+} from '@ant-design/icons'
+import { useTheme } from '@/contexts/ThemeContext'
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { supabase } from '@/lib/supabase'
 import { Note } from '@/types'
 import NotesList from '@/components/NotesList'
@@ -17,6 +24,15 @@ export default function Home() {
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const { isDarkMode, toggleTheme } = useTheme()
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const saveTimeoutRef = useRef<NodeJS.Timeout>()
+
+  useKeyboardShortcuts({
+    onNewNote: createNote,
+    onSave: updateNote,
+    onSearch: () => searchInputRef.current?.focus(),
+  })
 
   useEffect(() => {
     fetchNotes()
@@ -84,6 +100,29 @@ export default function Home() {
     setContent(note.content)
   }
 
+  const debouncedSave = (noteTitle: string, noteContent: string) => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current)
+    }
+
+    saveTimeoutRef.current = setTimeout(() => {
+      if (selectedNote) {
+        updateNote(noteTitle, noteContent)
+      }
+    }, 1000)
+  }
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = e.target.value
+    setTitle(newTitle)
+    debouncedSave(newTitle, content)
+  }
+
+  const handleContentChange = (newContent: string) => {
+    setContent(newContent)
+    debouncedSave(title, newContent)
+  }
+
   const deleteNote = async (noteId: string) => {
     try {
       const { error } = await supabase
@@ -116,18 +155,27 @@ export default function Home() {
 
   return (
     <Layout className="h-screen">
-      <Sider width={300} className="bg-white border-r">
+      <Sider width={300} className={`border-r ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
         <div className="p-4 space-y-4">
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={createNote}
-            block
-          >
-            New Note
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={createNote}
+              className="flex-1"
+            >
+              New Note (⌘N)
+            </Button>
+            <Tooltip title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
+              <Button
+                icon={isDarkMode ? <BulbFilled /> : <BulbOutlined />}
+                onClick={toggleTheme}
+              />
+            </Tooltip>
+          </div>
           <Input
-            placeholder="Search notes..."
+            ref={searchInputRef}
+            placeholder="Search notes... (⌘K)"
             prefix={<SearchOutlined />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -142,24 +190,19 @@ export default function Home() {
         />
       </Sider>
       <Layout>
-        <Header className="bg-white p-4 border-b">
+        <Header className={`p-4 border-b ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
           <Input
             placeholder="Note title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            onBlur={updateNote}
+            onChange={handleTitleChange}
             className="text-xl"
           />
         </Header>
         <Content className="p-4">
-          <Editor content={content} onChange={setContent} />
-          <Button
-            type="primary"
-            onClick={updateNote}
-            className="mt-4"
-          >
-            Save
-          </Button>
+          <Editor content={content} onChange={handleContentChange} />
+          <div className="mt-4 text-sm text-gray-500">
+            Press ⌘S to save • Last saved: {new Date().toLocaleTimeString()}
+          </div>
         </Content>
       </Layout>
     </Layout>

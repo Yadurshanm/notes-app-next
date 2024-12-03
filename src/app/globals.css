@@ -7,8 +7,32 @@
   --background-rgb: 255, 255, 255;
 }
 
+.dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 17, 24, 39;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
   min-height: 100vh;
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.dark .ProseMirror {
+  background-color: rgb(31, 41, 55);
+  color: rgb(229, 231, 235);
+}
+
+.dark .ant-input {
+  background-color: rgb(31, 41, 55);
+  color: rgb(229, 231, 235);
+}
+
+.dark .ant-btn {
+  border-color: rgb(75, 85, 99);
+}
+
+.dark .ant-list-item {
+  border-color: rgb(55, 65, 81);
 }

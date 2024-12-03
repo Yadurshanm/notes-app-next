@@ -2,6 +2,7 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { useEffect } from 'react'
 import { Button, Space, Tooltip } from 'antd'
+import { useTheme } from '@/contexts/ThemeContext'
 import {
   BoldOutlined,
   ItalicOutlined,
@@ -22,6 +23,7 @@ interface EditorProps {
 }
 
 export default function Editor({ content, onChange }: EditorProps) {
+  const { isDarkMode } = useTheme()
   const editor = useEditor({
     extensions: [StarterKit],
     content,
@@ -42,8 +44,8 @@ export default function Editor({ content, onChange }: EditorProps) {
 
   return (
     <div className="prose max-w-none w-full">
-      <Space wrap className="mb-4 p-2 border rounded-md bg-gray-50">
-        <Tooltip title="Undo">
+      <Space wrap className={`mb-4 p-2 border rounded-md ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+        <Tooltip title="Undo (⌘Z)">
           <Button
             icon={<UndoOutlined />}
             onClick={() => editor.chain().focus().undo().run()}
