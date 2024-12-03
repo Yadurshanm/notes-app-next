@@ -2,7 +2,7 @@
 
 import { useTheme } from '@/contexts/ThemeContext'
 
-export function Version() {
+function Version() {
   const { isDarkMode } = useTheme()
   const version = 'v1.0.0'
 
@@ -12,3 +12,5 @@ export function Version() {
     </div>
   )
 }
+
+export default Version;

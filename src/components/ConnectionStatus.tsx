@@ -7,7 +7,7 @@ import { SupabaseIcon } from './SupabaseIcon'
 import { useTheme } from '@/contexts/ThemeContext'
 
 
-export function ConnectionStatus() {
+function ConnectionStatus() {
   const [status, setStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
   const [error, setError] = useState<string | null>(null)
 
@@ -69,4 +69,6 @@ export function ConnectionStatus() {
     </Tooltip>
   )
 }
+
+export default ConnectionStatus;
 

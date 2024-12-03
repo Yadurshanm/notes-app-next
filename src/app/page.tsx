@@ -5,7 +5,7 @@ import { Button, Input, message, Tooltip } from 'antd'
 import type { InputRef } from 'antd/es/input'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import ConnectionStatus from '@/components/ConnectionStatus'
-import { Version } from '@/components/Version'
+import Version from '@/components/Version'
 import {
   PlusOutlined,
   SearchOutlined,

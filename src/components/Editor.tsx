@@ -23,12 +23,6 @@ import {
   AlignRightOutlined,
   RedoOutlined,
   UndoOutlined,
-  HighlightOutlined,
-  CheckSquareOutlined,
-  LinkOutlined,
-  VerticalAlignTopOutlined,
-  VerticalAlignBottomOutlined,
-  HeadingOutlined,
 } from '@ant-design/icons'
 
 interface EditorProps {
