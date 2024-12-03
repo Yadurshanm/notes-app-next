@@ -37,6 +37,15 @@ body {
   border-color: rgb(55, 65, 81);
 }
 
+.ant-list-item {
+  padding: 0 !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+}
+
+.dark .ant-list-item {
+  border-color: rgb(55, 65, 81) !important;
+}
+
 .ProseMirror {
   min-height: 200px;
   padding: 1rem;

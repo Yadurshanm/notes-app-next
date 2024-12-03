@@ -16,7 +16,7 @@ export function AppLayout({ sidebar, content }: AppLayoutProps) {
       <div className={`w-[300px] border-r flex flex-col ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
         {sidebar}
       </div>
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {content}
       </div>
     </div>

@@ -210,7 +210,7 @@ export default function Home() {
 
   const sidebar = (
     <div className="flex flex-col h-full">
-      <div className="p-4 space-y-4 flex-none">
+      <div className="px-4 pt-4 pb-2 space-y-3 flex-none">
         <div className="flex items-center justify-between gap-2">
           <Button
             type="primary"
