@@ -38,7 +38,9 @@ export function Editor({ content, onChange }: EditorProps) {
     setIsMounted(true)
   }, [])
 
-  const editor = useEditor({
+  const editor = useEditor(
+    !isMounted ? null : {
+      immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         bulletList: {
@@ -100,14 +102,21 @@ export function Editor({ content, onChange }: EditorProps) {
   if (!isMounted || !editor) {
     return (
       <div className="prose max-w-none w-full">
-        <div className={`mb-4 p-2 border rounded-md ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+        <div className={`mb-4 p-2 border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
           <div className="flex gap-2">
             {[...Array(10)].map((_, i) => (
-              <div key={i} className="w-8 h-8 rounded bg-gray-200 animate-pulse" />
+              <div 
+                key={i} 
+                className={`w-8 h-8 rounded animate-pulse ${
+                  isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
+                }`} 
+              />
             ))}
           </div>
         </div>
-        <div className={`min-h-[200px] border rounded-md p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+        <div className={`min-h-[200px] border rounded-md p-4 ${
+          isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+        }`}>
           <div className="animate-pulse space-y-3">
             <div className={`h-4 rounded w-3/4 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`} />
             <div className={`h-4 rounded w-1/2 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`} />
@@ -189,7 +198,7 @@ export function Editor({ content, onChange }: EditorProps) {
 
   return (
     <div className="prose max-w-none w-full">
-      <Space wrap className={`mb-4 p-2 border rounded-md ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+      <Space wrap className={`mb-4 p-2 border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
         {editorButtons.map((button, index) => (
           <Tooltip key={index} title={button.tooltip}>
             <Button
@@ -197,11 +206,17 @@ export function Editor({ content, onChange }: EditorProps) {
               onClick={button.onClick}
               disabled={button.disabled}
               type={button.active ? 'primary' : 'default'}
+              className={isDarkMode ? 'border-gray-700' : ''}
             />
           </Tooltip>
         ))}
       </Space>
-      <EditorContent editor={editor} className="min-h-[200px] border rounded-md p-4" />
+      <EditorContent 
+        editor={editor} 
+        className={`min-h-[200px] border rounded-md p-4 ${
+          isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-100' : 'bg-white border-gray-200'
+        }`} 
+      />
     </div>
   )
 }
