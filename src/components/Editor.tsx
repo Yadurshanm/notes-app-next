@@ -12,18 +12,18 @@ import { useEffect, useState } from 'react'
 import { Button, ButtonGroup, Tooltip } from '@nextui-org/react'
 import { useTheme } from '@/contexts/ThemeContext'
 import {
-  BoldOutlined,
-  ItalicOutlined,
-  UnderlineOutlined,
-  OrderedListOutlined,
-  UnorderedListOutlined,
-  StrikethroughOutlined,
-  AlignLeftOutlined,
-  AlignCenterOutlined,
-  AlignRightOutlined,
-  RedoOutlined,
-  UndoOutlined,
-} from '@ant-design/icons'
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  ListIcon,
+  ListOrderedIcon,
+  StrikethroughIcon,
+  AlignLeftIcon,
+  AlignCenterIcon,
+  AlignRightIcon,
+  RedoIcon,
+  UndoIcon,
+} from 'lucide-react'
 
 interface EditorProps {
   content: string
@@ -132,67 +132,67 @@ export function Editor({ content, onChange }: EditorProps) {
   const editorButtons = [
     {
       tooltip: 'Undo (⌘Z)',
-      icon: <UndoOutlined />,
+      icon: <UndoIcon className="h-4 w-4" />,
       onClick: () => editor?.chain().focus().undo().run(),
       disabled: !editor?.can().undo(),
     },
     {
       tooltip: 'Redo (⌘⇧Z)',
-      icon: <RedoOutlined />,
+      icon: <RedoIcon className="h-4 w-4" />,
       onClick: () => editor?.chain().focus().redo().run(),
       disabled: !editor?.can().redo(),
     },
     {
       tooltip: 'Bold (⌘B)',
-      icon: <BoldOutlined />,
+      icon: <BoldIcon className="h-4 w-4" />,
       onClick: () => editor?.chain().focus().toggleBold().run(),
       active: editor?.isActive('bold'),
     },
     {
       tooltip: 'Italic (⌘I)',
-      icon: <ItalicOutlined />,
+      icon: <ItalicIcon className="h-4 w-4" />,
       onClick: () => editor?.chain().focus().toggleItalic().run(),
       active: editor?.isActive('italic'),
     },
     {
       tooltip: 'Underline (⌘U)',
-      icon: <UnderlineOutlined />,
+      icon: <UnderlineIcon className="h-4 w-4" />,
       onClick: () => editor?.chain().focus().toggleUnderline().run(),
       active: editor?.isActive('underline'),
     },
     {
       tooltip: 'Strike (⌘⇧X)',
-      icon: <StrikethroughOutlined />,
+      icon: <StrikethroughIcon className="h-4 w-4" />,
       onClick: () => editor?.chain().focus().toggleStrike().run(),
       active: editor?.isActive('strike'),
     },
     {
       tooltip: 'Bullet List (⌘⇧8)',
-      icon: <UnorderedListOutlined />,
+      icon: <ListIcon className="h-4 w-4" />,
       onClick: () => editor?.chain().focus().toggleBulletList().run(),
       active: editor?.isActive('bulletList'),
     },
     {
       tooltip: 'Ordered List (⌘⇧7)',
-      icon: <OrderedListOutlined />,
+      icon: <ListOrderedIcon className="h-4 w-4" />,
       onClick: () => editor?.chain().focus().toggleOrderedList().run(),
       active: editor?.isActive('orderedList'),
     },
     {
       tooltip: 'Align Left (⌘⇧L)',
-      icon: <AlignLeftOutlined />,
+      icon: <AlignLeftIcon className="h-4 w-4" />,
       onClick: () => editor?.chain().focus().setTextAlign('left').run(),
       active: editor?.isActive({ textAlign: 'left' }),
     },
     {
       tooltip: 'Align Center (⌘⇧E)',
-      icon: <AlignCenterOutlined />,
+      icon: <AlignCenterIcon className="h-4 w-4" />,
       onClick: () => editor?.chain().focus().setTextAlign('center').run(),
       active: editor?.isActive({ textAlign: 'center' }),
     },
     {
       tooltip: 'Align Right (⌘⇧R)',
-      icon: <AlignRightOutlined />,
+      icon: <AlignRightIcon className="h-4 w-4" />,
       onClick: () => editor?.chain().focus().setTextAlign('right').run(),
       active: editor?.isActive({ textAlign: 'right' }),
     },

@@ -1,17 +1,18 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { Button, Input, message, Tooltip, ConfigProvider } from 'antd'
-import type { InputRef } from 'antd/es/input'
+import { Button, Input, Tooltip } from '@nextui-org/react'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
 import { Version } from '@/components/Version'
+import { useToast } from '@/hooks/useToast'
+import { Toaster } from 'sonner'
 import {
-  PlusOutlined,
-  SearchOutlined,
-  BulbOutlined,
-  BulbFilled,
-} from '@ant-design/icons'
+  Plus,
+  Search,
+  Sun,
+  Moon,
+} from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { supabase } from '@/lib/supabase'
@@ -29,7 +30,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const { isDarkMode, toggleTheme } = useTheme()
-  const searchInputRef = useRef<InputRef>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout>()
   const createTimeoutRef = useRef<NodeJS.Timeout>()
 
@@ -54,7 +55,7 @@ export default function Home() {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Error fetching notes'
       setError(errorMessage)
-      message.error(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -81,7 +82,7 @@ export default function Home() {
         setSelectedNote(data)
         setTitle(data.title)
         setNoteContent(data.content)
-        message.success('New note created')
+        toast.success('New note created')
       }
     } catch (error) {
       console.error('Error creating note:', error)
@@ -91,7 +92,7 @@ export default function Home() {
 
   const updateNote = async (noteTitle?: string, noteContent?: string) => {
     if (!selectedNote) {
-      message.warning('No note selected')
+      toast.warning('No note selected')
       return
     }
 
@@ -119,11 +120,11 @@ export default function Home() {
         )
         setNotes(updatedNotes)
         setSelectedNote(data)
-        message.success('Note saved')
+        toast.success('Note saved')
       }
     } catch (error) {
       console.error('Error saving note:', error)
-      message.error('Error saving note')
+      toast.error('Error saving note')
     }
   }
 
@@ -175,17 +176,16 @@ export default function Home() {
         if (data) {
           setNotes([data, ...notes])
           setSelectedNote(data)
-          message.success('Note created')
+          toast.success('Note created')
         }
       } catch (error) {
         console.error('Error creating note:', error)
-        message.error('Error creating note')
+        toast.error('Error creating note')
       }
     }, 1000)
   }
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTitle = e.target.value
+  const handleTitleChange = (newTitle: string) => {
     setTitle(newTitle)
     
     if (!selectedNote && (newTitle || noteContent)) {
@@ -220,9 +220,9 @@ export default function Home() {
         setTitle('')
         setNoteContent('')
       }
-      message.success('Note deleted')
+      toast.success('Note deleted')
     } catch (error) {
-      message.error('Error deleting note')
+      toast.error('Error deleting note')
     }
   }
 
@@ -249,7 +249,7 @@ export default function Home() {
         ) : (
           <div className="text-center">
             <p className="text-red-500 mb-4">{error}</p>
-            <Button type="primary" onClick={fetchNotes}>
+            <Button color="primary" onClick={fetchNotes}>
               Retry
             </Button>
           </div>
@@ -263,29 +263,35 @@ export default function Home() {
       <div className="px-4 pt-4 pb-2 space-y-3 flex-none">
         <div className="flex items-center justify-between gap-2">
           <Button
-            type="primary"
-            icon={<PlusOutlined />}
+            color="primary"
+            startContent={<Plus className="h-4 w-4" />}
             onClick={createNote}
             className="flex-1"
           >
             New Note
             <span className="ml-1 text-xs opacity-70">(⌘N)</span>
           </Button>
-          <Tooltip title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
+          <Tooltip content={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
             <Button
-              icon={isDarkMode ? <BulbFilled /> : <BulbOutlined />}
+              isIconOnly
+              variant="flat"
               onClick={toggleTheme}
-            />
+            >
+              {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
           </Tooltip>
         </div>
         <Input
           ref={searchInputRef}
           placeholder="Search notes... (⌘K)"
-          prefix={<SearchOutlined className="text-gray-400" />}
+          startContent={<Search className="h-4 w-4 text-gray-400" />}
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          allowClear
-          className={`${isDarkMode ? 'bg-gray-800 text-white' : ''}`}
+          onValueChange={setSearchQuery}
+          isClearable
+          classNames={{
+            input: isDarkMode ? 'bg-gray-800 text-white' : '',
+            inputWrapper: isDarkMode ? 'bg-gray-800' : ''
+          }}
         />
       </div>
       <div className="flex-1 overflow-hidden">
@@ -309,8 +315,12 @@ export default function Home() {
         <Input
           placeholder="Note title"
           value={title}
-          onChange={handleTitleChange}
-          className={`text-xl ${isDarkMode ? 'bg-gray-800 text-white' : ''}`}
+          onValueChange={handleTitleChange}
+          size="lg"
+          classNames={{
+            input: isDarkMode ? 'bg-gray-800 text-white' : '',
+            inputWrapper: isDarkMode ? 'bg-gray-800' : ''
+          }}
         />
       </div>
       <div className="flex-1 p-4 overflow-auto">
@@ -323,22 +333,9 @@ export default function Home() {
   )
 
   return (
-    <ConfigProvider
-      theme={{
-        components: {
-          Button: {
-            algorithm: true,
-          },
-          Input: {
-            algorithm: true,
-          },
-          Tooltip: {
-            algorithm: true,
-          },
-        },
-      }}
-    >
+    <>
       <AppLayout sidebar={sidebar} content={content} />
-    </ConfigProvider>
+      <Toaster richColors />
+    </>
   )
 }
