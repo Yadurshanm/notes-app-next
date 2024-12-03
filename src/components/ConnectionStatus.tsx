@@ -8,7 +8,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 
 import { forwardRef } from 'react'
 
-export const ConnectionStatus = forwardRef<HTMLDivElement>((_, ref) => {
+const ConnectionStatus = forwardRef<HTMLDivElement>((_, ref) => {
   const [status, setStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
   const [error, setError] = useState<string | null>(null)
 
@@ -69,4 +69,6 @@ export const ConnectionStatus = forwardRef<HTMLDivElement>((_, ref) => {
       </div>
     </Tooltip>
   )
-}
+})
+
+export default ConnectionStatus

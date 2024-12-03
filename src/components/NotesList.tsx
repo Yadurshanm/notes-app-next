@@ -11,7 +11,8 @@ interface NotesListProps {
   onDeleteNote: (noteId: string) => void
 }
 
-const NotesList = forwardRef<HTMLDivElement, NotesListProps>(({ notes, selectedNoteId, onSelectNote, onDeleteNote }, ref) => {
+const NotesList = forwardRef<HTMLDivElement, NotesListProps>((props, ref) => {
+  const { notes, selectedNoteId, onSelectNote, onDeleteNote } = props
   const { isDarkMode } = useTheme()
   return (
     <List
