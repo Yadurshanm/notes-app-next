@@ -52,7 +52,11 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }
 
   if (!mounted) {
-    return null
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="animate-pulse">Loading...</div>
+      </div>
+    )
   }
 
   return (

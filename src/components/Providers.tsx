@@ -9,8 +9,10 @@ interface ProvidersProps {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <ThemeProvider>
-      {children}
-    </ThemeProvider>
+    <div className="min-h-screen">
+      <ThemeProvider>
+        {children}
+      </ThemeProvider>
+    </div>
   )
 }
