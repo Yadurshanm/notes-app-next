@@ -49,8 +49,10 @@ export function ConnectionStatus() {
     error: 'Connection Error'
   }
 
+  const { isDarkMode } = useTheme()
+
   return (
-    <Tooltip title={error || statusText[status]}>
+    <Tooltip title={error || statusText[status]} mouseEnterDelay={0.5}>
       <div className="flex items-center gap-1.5 cursor-help">
         <SupabaseIcon className={`
           w-3.5 h-3.5 transition-colors duration-200

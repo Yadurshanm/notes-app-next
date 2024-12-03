@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { Button, Input, message, Tooltip } from 'antd'
+import type { InputRef } from 'antd/es/input'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
 import { Version } from '@/components/Version'
@@ -28,7 +29,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const { isDarkMode, toggleTheme } = useTheme()
-  const searchInputRef = useRef<HTMLInputElement>(null)
+  const searchInputRef = useRef<InputRef>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout>()
 
   useEffect(() => {
