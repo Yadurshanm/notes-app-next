@@ -38,9 +38,7 @@ export function Editor({ content, onChange }: EditorProps) {
     setIsMounted(true)
   }, [])
 
-  const editor = useEditor(
-    !isMounted ? null : {
-      immediatelyRender: false,
+  const editor = useEditor({
     extensions: [
       StarterKit.configure({
         bulletList: {
@@ -197,7 +195,7 @@ export function Editor({ content, onChange }: EditorProps) {
   ]
 
   return (
-    <div className="prose max-w-none w-full">
+    <div className={`prose max-w-none w-full ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-black'}`}>
       <Space wrap className={`mb-4 p-2 border rounded-md ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
         {editorButtons.map((button, index) => (
           <Tooltip key={index} title={button.tooltip}>
@@ -220,4 +218,3 @@ export function Editor({ content, onChange }: EditorProps) {
     </div>
   )
 }
-
