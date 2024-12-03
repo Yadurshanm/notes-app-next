@@ -33,10 +33,17 @@ cd notes-app
 npm install
 \`\`\`
 
-3. Set up Supabase:
+3. Set up environment variables:
+   - Copy `.env.example` to `.env.local`
+   - Update the Supabase URL and anon key in `.env.local`
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. Set up Supabase:
    - Create a new project in Supabase
    - Execute the SQL from schema.sql in the SQL editor
-   - Update the Supabase URL and anon key in src/lib/supabase.ts
+   - Update the environment variables with your Supabase credentials
 
 4. Run the development server:
 \`\`\`bash
