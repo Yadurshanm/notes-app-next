@@ -6,9 +6,8 @@ import { supabase } from '@/lib/supabase'
 import { SupabaseIcon } from './SupabaseIcon'
 import { useTheme } from '@/contexts/ThemeContext'
 
-import { forwardRef } from 'react'
 
-const ConnectionStatus = forwardRef<HTMLDivElement>(function ConnectionStatus(_, ref) {
+export function ConnectionStatus() {
   const [status, setStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
   const [error, setError] = useState<string | null>(null)
 
@@ -56,7 +55,7 @@ const ConnectionStatus = forwardRef<HTMLDivElement>(function ConnectionStatus(_,
 
   return (
     <Tooltip title={error || statusText[status]} mouseEnterDelay={0.5}>
-      <div ref={ref} className="flex items-center gap-1.5 cursor-help">
+      <div className="flex items-center gap-1.5 cursor-help">
         <SupabaseIcon className={`
           w-3.5 h-3.5 transition-colors duration-200
           ${status === 'connected' ? 'text-green-500' : ''}
@@ -69,7 +68,5 @@ const ConnectionStatus = forwardRef<HTMLDivElement>(function ConnectionStatus(_,
       </div>
     </Tooltip>
   )
-})
+}
 
-const ConnectionStatusComponent = ConnectionStatus;
-export default ConnectionStatusComponent;

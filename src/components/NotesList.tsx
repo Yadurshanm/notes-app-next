@@ -11,12 +11,11 @@ interface NotesListProps {
   onDeleteNote: (noteId: string) => void
 }
 
-const NotesList = forwardRef<HTMLDivElement, NotesListProps>(function NotesList(props, ref) {
-  const { notes, selectedNoteId, onSelectNote, onDeleteNote } = props
+const NotesList = ({ notes, selectedNoteId, onSelectNote, onDeleteNote }: NotesListProps) => {
   const { isDarkMode } = useTheme()
   return (
     <List
-      ref={ref}
+
       className="h-full overflow-auto"
       dataSource={notes}
       split={false}
@@ -64,5 +63,4 @@ const NotesList = forwardRef<HTMLDivElement, NotesListProps>(function NotesList(
   )
 }
 
-const NotesListComponent = NotesList;
-export default NotesListComponent;
+export default NotesList;

@@ -36,8 +36,7 @@ interface EditorProps {
   onChange: (content: string) => void
 }
 
-const Editor = forwardRef<HTMLDivElement, EditorProps>(function Editor(props, ref) {
-  const { content, onChange } = props
+const Editor = ({ content, onChange }: EditorProps) => {
   const { isDarkMode } = useTheme()
   const [isMounted, setIsMounted] = useState(false)
 
@@ -305,5 +304,4 @@ const Editor = forwardRef<HTMLDivElement, EditorProps>(function Editor(props, re
   )
 }
 
-const EditorComponent = Editor;
-export default EditorComponent;
+export default Editor;
