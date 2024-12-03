@@ -23,12 +23,6 @@ import {
   AlignRightOutlined,
   RedoOutlined,
   UndoOutlined,
-  HighlightOutlined,
-  CheckSquareOutlined,
-  LinkOutlined,
-  VerticalAlignTopOutlined,
-  VerticalAlignBottomOutlined,
-  HeadingOutlined,
 } from '@ant-design/icons'
 
 interface EditorProps {
@@ -44,109 +38,58 @@ export function Editor({ content, onChange }: EditorProps) {
     setIsMounted(true)
   }, [])
 
-  const editor = useEditor(
-    !isMounted ? null : {
-      extensions: [
-        StarterKit.configure({
-          bulletList: {
-            keepMarks: true,
-            keepAttributes: false,
-            HTMLAttributes: {
-              class: 'list-disc list-outside ml-4',
-            },
-          },
-          orderedList: {
-            keepMarks: true,
-            keepAttributes: false,
-            HTMLAttributes: {
-              class: 'list-decimal list-outside ml-4',
-            },
-          },
-          heading: {
-            levels: [1, 2, 3],
-          },
-        }),
-        TextAlign.configure({
-          types: ['heading', 'paragraph', 'bulletList', 'orderedList'],
-        }),
-        Underline,
-        Highlight.configure({
-          multicolor: true,
-        }),
-        TaskList,
-        TaskItem.configure({
-          nested: true,
-        }),
-        Superscript,
-        Subscript,
-        Link.configure({
-          openOnClick: false,
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        bulletList: {
+          keepMarks: true,
+          keepAttributes: false,
           HTMLAttributes: {
-            class: 'text-blue-500 hover:text-blue-700 underline',
+            class: 'list-disc list-outside ml-4',
           },
-        }),
-      ],
-      autofocus: true,
-      enableInputRules: true,
-      enablePasteRules: true,
-      handleDOMEvents: {
-        keydown: (_, event) => {
-          // Handle keyboard shortcuts
-          if (event.metaKey || event.ctrlKey) {
-            switch (event.key.toLowerCase()) {
-              case 'u':
-                event.preventDefault()
-                editor?.chain().focus().toggleUnderline().run()
-                return true
-              case 'h':
-                if (event.shiftKey) {
-                  event.preventDefault()
-                  editor?.chain().focus().toggleHighlight().run()
-                  return true
-                }
-                break
-              case '1':
-                if (event.altKey) {
-                  event.preventDefault()
-                  editor?.chain().focus().toggleHeading({ level: 1 }).run()
-                  return true
-                }
-                break
-              case '9':
-                if (event.shiftKey) {
-                  event.preventDefault()
-                  editor?.chain().focus().toggleTaskList().run()
-                  return true
-                }
-                break
-              case '.':
-                event.preventDefault()
-                editor?.chain().focus().toggleSuperscript().run()
-                return true
-              case ',':
-                event.preventDefault()
-                editor?.chain().focus().toggleSubscript().run()
-                return true
-            }
-          }
-          return false
         },
-      },
-      editorProps: {
-        attributes: {
-          class: 'prose max-w-none w-full focus:outline-none',
+        orderedList: {
+          keepMarks: true,
+          keepAttributes: false,
+          HTMLAttributes: {
+            class: 'list-decimal list-outside ml-4',
+          },
         },
-      },
-      onCreate: ({ editor }) => {
-        editor.setOptions({ immediateRender: false })
-      },
-      content: isMounted ? content : '',
-      onUpdate: ({ editor }) => {
-        onChange(editor.getHTML())
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph', 'bulletList', 'orderedList'],
+      }),
+      Underline,
+      Highlight.configure({
+        multicolor: true,
+      }),
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+      }),
+      Superscript,
+      Subscript,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-blue-500 hover:text-blue-700 underline',
+        },
+      }),
+    ],
+    autofocus: 'end',
+    editorProps: {
+      attributes: {
+        class: 'prose max-w-none w-full focus:outline-none',
       },
     },
-    [isMounted]
-  )
+    content: isMounted ? content : '',
+    onUpdate: ({ editor }) => {
+      onChange(editor.getHTML())
+    },
+  })
 
   useEffect(() => {
     if (editor && isMounted && content !== editor.getHTML()) {
@@ -175,7 +118,7 @@ export function Editor({ content, onChange }: EditorProps) {
     )
   }
 
-  const editorButtons = editor ? [
+  const editorButtons = [
     {
       tooltip: 'Undo (⌘Z)',
       icon: <UndoOutlined />,
@@ -213,18 +156,6 @@ export function Editor({ content, onChange }: EditorProps) {
       active: editor?.isActive('strike'),
     },
     {
-      tooltip: 'Highlight (⌘⇧H)',
-      icon: <HighlightOutlined />,
-      onClick: () => editor?.chain().focus().toggleHighlight().run(),
-      active: editor?.isActive('highlight'),
-    },
-    {
-      tooltip: 'Heading 1 (⌘⌥1)',
-      icon: <HeadingOutlined />,
-      onClick: () => editor?.chain().focus().toggleHeading({ level: 1 }).run(),
-      active: editor?.isActive('heading', { level: 1 }),
-    },
-    {
       tooltip: 'Bullet List (⌘⇧8)',
       icon: <UnorderedListOutlined />,
       onClick: () => editor?.chain().focus().toggleBulletList().run(),
@@ -235,35 +166,6 @@ export function Editor({ content, onChange }: EditorProps) {
       icon: <OrderedListOutlined />,
       onClick: () => editor?.chain().focus().toggleOrderedList().run(),
       active: editor?.isActive('orderedList'),
-    },
-    {
-      tooltip: 'Task List (⌘⇧9)',
-      icon: <CheckSquareOutlined />,
-      onClick: () => editor?.chain().focus().toggleTaskList().run(),
-      active: editor?.isActive('taskList'),
-    },
-    {
-      tooltip: 'Superscript (⌘.)',
-      icon: <VerticalAlignTopOutlined />,
-      onClick: () => editor?.chain().focus().toggleSuperscript().run(),
-      active: editor?.isActive('superscript'),
-    },
-    {
-      tooltip: 'Subscript (⌘,)',
-      icon: <VerticalAlignBottomOutlined />,
-      onClick: () => editor?.chain().focus().toggleSubscript().run(),
-      active: editor?.isActive('subscript'),
-    },
-    {
-      tooltip: 'Link (⌘K)',
-      icon: <LinkOutlined />,
-      onClick: () => {
-        const url = window.prompt('Enter URL')
-        if (url && editor) {
-          editor.chain().focus().setLink({ href: url }).run()
-        }
-      },
-      active: editor?.isActive('link'),
     },
     {
       tooltip: 'Align Left (⌘⇧L)',
@@ -283,7 +185,7 @@ export function Editor({ content, onChange }: EditorProps) {
       onClick: () => editor?.chain().focus().setTextAlign('right').run(),
       active: editor?.isActive({ textAlign: 'right' }),
     },
-  ] : []
+  ]
 
   return (
     <div className="prose max-w-none w-full">
