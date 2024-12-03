@@ -2,6 +2,7 @@ import { List, Popconfirm } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 import { Note } from '@/types'
 import { useTheme } from '@/contexts/ThemeContext'
+import { forwardRef } from 'react'
 
 interface NotesListProps {
   notes: Note[]
@@ -10,10 +11,11 @@ interface NotesListProps {
   onDeleteNote: (noteId: string) => void
 }
 
-const NotesList = ({ notes, selectedNoteId, onSelectNote, onDeleteNote }: NotesListProps) => {
+const NotesList = forwardRef<HTMLDivElement, NotesListProps>(({ notes, selectedNoteId, onSelectNote, onDeleteNote }, ref) => {
   const { isDarkMode } = useTheme()
   return (
     <List
+      ref={ref}
       className="h-full overflow-auto"
       dataSource={notes}
       split={false}

@@ -8,7 +8,7 @@ import TaskItem from '@tiptap/extension-task-item'
 import Superscript from '@tiptap/extension-superscript'
 import Subscript from '@tiptap/extension-subscript'
 import Link from '@tiptap/extension-link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, forwardRef } from 'react'
 import { Button, Space, Tooltip } from 'antd'
 import { useTheme } from '@/contexts/ThemeContext'
 import {
@@ -36,7 +36,7 @@ interface EditorProps {
   onChange: (content: string) => void
 }
 
-const Editor = ({ content, onChange }: EditorProps) => {
+const Editor = forwardRef<HTMLDivElement, EditorProps>(({ content, onChange }, ref) => {
   const { isDarkMode } = useTheme()
   const [isMounted, setIsMounted] = useState(false)
 
@@ -286,7 +286,7 @@ const Editor = ({ content, onChange }: EditorProps) => {
   ] : []
 
   return (
-    <div className="prose max-w-none w-full">
+    <div className="prose max-w-none w-full" ref={ref}>
       <Space wrap className={`mb-4 p-2 border rounded-md ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
         {editorButtons.map((button, index) => (
           <Tooltip key={index} title={button.tooltip}>
