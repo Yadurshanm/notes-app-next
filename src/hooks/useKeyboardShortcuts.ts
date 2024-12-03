@@ -6,12 +6,12 @@ interface ShortcutHandlers {
   onSearch?: () => void
 }
 
-export function useKeyboardShortcuts({
-  onNewNote,
-  onSave,
-  onSearch,
-}: ShortcutHandlers) {
+export function useKeyboardShortcuts(handlers: ShortcutHandlers = {}) {
+  const { onNewNote, onSave, onSearch } = handlers
+
   useEffect(() => {
+    if (!onNewNote && !onSave && !onSearch) return
+
     const handleKeyDown = (e: KeyboardEvent) => {
       const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
       const modifier = isMac ? e.metaKey : e.ctrlKey
@@ -19,16 +19,22 @@ export function useKeyboardShortcuts({
       if (modifier) {
         switch (e.key.toLowerCase()) {
           case 'n':
-            e.preventDefault()
-            onNewNote?.()
+            if (onNewNote) {
+              e.preventDefault()
+              onNewNote()
+            }
             break
           case 's':
-            e.preventDefault()
-            onSave?.()
+            if (onSave) {
+              e.preventDefault()
+              onSave()
+            }
             break
           case 'k':
-            e.preventDefault()
-            onSearch?.()
+            if (onSearch) {
+              e.preventDefault()
+              onSearch()
+            }
             break
         }
       }

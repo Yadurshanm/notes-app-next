@@ -29,12 +29,6 @@ export default function Home() {
   const searchInputRef = useRef<HTMLInputElement>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout>()
 
-  useKeyboardShortcuts({
-    onNewNote: createNote,
-    onSave: updateNote,
-    onSearch: () => searchInputRef.current?.focus(),
-  })
-
   useEffect(() => {
     fetchNotes()
   }, [])
@@ -168,6 +162,12 @@ export default function Home() {
       note.content.toLowerCase().replace(/<[^>]*>/g, '').includes(query)
     )
   }, [notes, searchQuery])
+
+  useKeyboardShortcuts({
+    onNewNote: createNote,
+    onSave: updateNote,
+    onSearch: () => searchInputRef.current?.focus(),
+  })
 
   if (loading || error) {
     return (
