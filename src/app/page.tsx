@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { Button, Input, Layout, message, Tooltip } from 'antd'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { ConnectionStatus } from '@/components/ConnectionStatus'
 import {
   PlusOutlined,
   SearchOutlined,
@@ -227,6 +228,9 @@ export default function Home() {
                 onClick={toggleTheme}
               />
             </Tooltip>
+          </div>
+          <div className="py-2">
+            <ConnectionStatus />
           </div>
           <Input
             ref={searchInputRef}

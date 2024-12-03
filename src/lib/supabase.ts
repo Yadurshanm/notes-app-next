@@ -18,5 +18,11 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
   },
   db: {
     schema: 'public'
+  },
+  global: {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${supabaseKey}`
+    }
   }
 })
