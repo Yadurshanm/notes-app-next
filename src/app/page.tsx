@@ -22,7 +22,7 @@ export default function Home() {
   const [notes, setNotes] = useState<Note[]>([])
   const [selectedNote, setSelectedNote] = useState<Note | null>(null)
   const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
+  const [noteContent, setNoteContent] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -73,7 +73,7 @@ export default function Home() {
         setNotes([data, ...notes])
         setSelectedNote(data)
         setTitle(data.title)
-        setContent(data.content)
+        setNoteContent(data.content)
         message.success('New note created')
       }
     } catch (error) {
@@ -89,7 +89,7 @@ export default function Home() {
     }
 
     const updatedTitle = noteTitle ?? title
-    const updatedContent = noteContent ?? content
+    const updatedContent = noteContent ?? ''
     const now = new Date().toISOString()
 
     try {
@@ -125,7 +125,7 @@ export default function Home() {
     requestAnimationFrame(() => {
       setSelectedNote(note)
       setTitle(note.title)
-      setContent(note.content)
+      setNoteContent(note.content)
     })
   }
 
@@ -147,11 +147,11 @@ export default function Home() {
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value
     setTitle(newTitle)
-    debouncedSave(newTitle, content)
+    debouncedSave(newTitle, noteContent)
   }
 
   const handleContentChange = (newContent: string) => {
-    setContent(newContent)
+    setNoteContent(newContent)
     debouncedSave(title, newContent)
   }
 
@@ -168,7 +168,7 @@ export default function Home() {
       if (selectedNote?.id === noteId) {
         setSelectedNote(null)
         setTitle('')
-        setContent('')
+        setNoteContent('')
       }
       message.success('Note deleted')
     } catch (error) {
@@ -263,7 +263,7 @@ export default function Home() {
         />
       </div>
       <div className="flex-1 p-4 overflow-auto">
-        <Editor content={content} onChange={handleContentChange} />
+        <Editor content={noteContent} onChange={handleContentChange} />
         <div className={`mt-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
           Press ⌘S to save • Last saved: {new Date().toLocaleTimeString()}
         </div>
