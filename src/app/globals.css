@@ -77,6 +77,48 @@ body {
   text-align: justify;
 }
 
+.ProseMirror mark {
+  background-color: #fef08a;
+  border-radius: 0.2em;
+  padding: 0 0.1em;
+}
+
+.dark .ProseMirror mark {
+  background-color: #854d0e;
+  color: #fef9c3;
+}
+
+.ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+}
+
+.ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.ProseMirror ul[data-type="taskList"] li > label {
+  margin-right: 0.5em;
+  user-select: none;
+}
+
+.ProseMirror ul[data-type="taskList"] li > div {
+  flex: 1;
+  margin: 0;
+}
+
+.ProseMirror sup {
+  font-size: 0.7em;
+  vertical-align: super;
+}
+
+.ProseMirror sub {
+  font-size: 0.7em;
+  vertical-align: sub;
+}
+
 .dark .ant-input {
   background-color: rgb(31, 41, 55);
   color: rgb(229, 231, 235);
