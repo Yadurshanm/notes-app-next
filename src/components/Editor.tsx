@@ -36,7 +36,7 @@ interface EditorProps {
   onChange: (content: string) => void
 }
 
-export default function Editor({ content, onChange }: EditorProps) {
+const Editor = ({ content, onChange }: EditorProps) => {
   const { isDarkMode } = useTheme()
   const [isMounted, setIsMounted] = useState(false)
 
@@ -303,3 +303,5 @@ export default function Editor({ content, onChange }: EditorProps) {
     </div>
   )
 }
+
+export default Editor

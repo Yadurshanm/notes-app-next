@@ -10,7 +10,7 @@ interface NotesListProps {
   onDeleteNote: (noteId: string) => void
 }
 
-export default function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }: NotesListProps) {
+const NotesList = ({ notes, selectedNoteId, onSelectNote, onDeleteNote }: NotesListProps) => {
   const { isDarkMode } = useTheme()
   return (
     <List
@@ -60,3 +60,5 @@ export default function NotesList({ notes, selectedNoteId, onSelectNote, onDelet
     />
   )
 }
+
+export default NotesList
