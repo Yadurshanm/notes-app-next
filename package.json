@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.2",
+    "@nextui-org/react": "^2.4.8",
     "@supabase/supabase-js": "^2.46.2",
     "@tiptap/extension-highlight": "^2.10.3",
     "@tiptap/extension-link": "^2.10.3",
