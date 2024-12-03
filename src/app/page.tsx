@@ -55,52 +55,67 @@ export default function Home() {
 
   const createNote = async () => {
     try {
+      const newNote = {
+        title: 'Untitled',
+        content: '',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+
       const { data, error } = await supabase
         .from('notes')
-        .insert([{ title: 'Untitled', content: '' }])
-        .select()
+        .insert([newNote])
+        .select('*')
+        .single()
 
       if (error) throw error
       if (data) {
-        setNotes([data[0], ...notes])
-        setSelectedNote(data[0])
-        setTitle(data[0].title)
-        setContent(data[0].content)
+        setNotes([data, ...notes])
+        setSelectedNote(data)
+        setTitle(data.title)
+        setContent(data.content)
+        message.success('New note created')
       }
     } catch (error) {
+      console.error('Error creating note:', error)
       message.error('Error creating note')
     }
   }
 
   const updateNote = async (noteTitle?: string, noteContent?: string) => {
-    if (!selectedNote) return
+    if (!selectedNote) {
+      message.warning('No note selected')
+      return
+    }
 
     const updatedTitle = noteTitle ?? title
     const updatedContent = noteContent ?? content
+    const now = new Date().toISOString()
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('notes')
         .update({ 
           title: updatedTitle, 
           content: updatedContent,
-          updated_at: new Date().toISOString()
+          updated_at: now
         })
         .eq('id', selectedNote.id)
+        .select('*')
+        .single()
 
       if (error) throw error
 
-      const updatedNotes = notes.map((note) =>
-        note.id === selectedNote.id ? { 
-          ...note, 
-          title: updatedTitle, 
-          content: updatedContent,
-          updated_at: new Date().toISOString()
-        } : note
-      )
-      setNotes(updatedNotes)
-      message.success('Note saved')
+      if (data) {
+        const updatedNotes = notes.map((note) =>
+          note.id === selectedNote.id ? data : note
+        )
+        setNotes(updatedNotes)
+        setSelectedNote(data)
+        message.success('Note saved')
+      }
     } catch (error) {
+      console.error('Error saving note:', error)
       message.error('Error saving note')
     }
   }
@@ -115,15 +130,18 @@ export default function Home() {
   }
 
   const debouncedSave = (noteTitle: string, noteContent: string) => {
+    if (!selectedNote) return
+
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current)
     }
 
-    saveTimeoutRef.current = setTimeout(() => {
-      if (selectedNote) {
+    // Only save if there are actual changes
+    if (noteTitle !== selectedNote.title || noteContent !== selectedNote.content) {
+      saveTimeoutRef.current = setTimeout(() => {
         updateNote(noteTitle, noteContent)
-      }
-    }, 1000)
+      }, 1000)
+    }
   }
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
