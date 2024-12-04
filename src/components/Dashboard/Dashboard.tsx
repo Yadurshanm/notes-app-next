@@ -4,10 +4,11 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { NotesOverview } from './widgets/NotesOverview'
 import { RecentNotes } from './widgets/RecentNotes'
 import { TagsCloud } from './widgets/TagsCloud'
-import { ActivityCalendar } from './widgets/ActivityCalendar'
+import { WeeklyActivity } from './widgets/WeeklyActivity'
 import { NotesChart } from './widgets/NotesChart'
 import { SearchTrends } from './widgets/SearchTrends'
 import { Note } from '@/types'
+import { AppLayout } from '../AppLayout'
 
 interface DashboardProps {
   notes: Note[]
@@ -17,7 +18,7 @@ interface DashboardProps {
 export function Dashboard({ notes, onSelectNote }: DashboardProps) {
   const { isDarkMode } = useTheme()
 
-  return (
+  const content = (
     <div className="p-6 h-full overflow-auto">
       <h1 className={`text-2xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
         Dashboard
@@ -42,9 +43,9 @@ export function Dashboard({ notes, onSelectNote }: DashboardProps) {
           <TagsCloud notes={notes} />
         </div>
 
-        {/* Activity Calendar */}
+        {/* Weekly Activity */}
         <div className="lg:col-span-2">
-          <ActivityCalendar notes={notes} />
+          <WeeklyActivity notes={notes} />
         </div>
 
         {/* Notes Chart */}
@@ -59,4 +60,6 @@ export function Dashboard({ notes, onSelectNote }: DashboardProps) {
       </div>
     </div>
   )
+
+  return <AppLayout content={content} />
 }
