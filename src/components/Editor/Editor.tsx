@@ -14,7 +14,7 @@ import Link from '@tiptap/extension-link'
 import { useEffect, useState } from 'react'
 import { Button } from '../Button'
 import { useTheme } from '@/contexts/ThemeContext'
-import { AIHelper } from '../AI/AIHelper'
+import { AIAssistant } from '../AI/AIAssistant'
 import {
   Bold,
   Italic,
@@ -223,10 +223,11 @@ function EditorComponent({ content, onChange, noteId }: EditorProps) {
   return (
     <div className={`prose max-w-none w-full ${isDarkMode ? 'prose-invert' : ''}`}>
       <div className="flex flex-col gap-2 mb-4 p-2">
-        <AIHelper 
+        <AIAssistant 
           currentContent={editor.getHTML()}
-          onAIResponse={(text) => {
+          onInsertText={(text) => {
             editor.commands.setContent(text)
+            editor.commands.focus()
           }}
         />
         <div className="flex flex-wrap gap-2">

@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server'
 import { writeFile } from 'fs/promises'
 import { join } from 'path'
-import * as sdk from 'microsoft-cognitiveservices-speech-sdk'
+import { exec } from 'child_process'
+import { promisify } from 'util'
+
+const execAsync = promisify(exec)
+
+// Path to whisper.cpp executable and model
+const WHISPER_PATH = process.env.WHISPER_PATH || '/usr/local/bin/whisper'
+const MODEL_PATH = process.env.WHISPER_MODEL_PATH || '/usr/local/share/whisper/models/ggml-base.bin'
 
 export async function POST(request: Request) {
   try {
@@ -18,49 +25,34 @@ export async function POST(request: Request) {
     // Save the audio file temporarily
     const bytes = await audio.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const tempPath = join('/tmp', `audio-${Date.now()}.wav`)
+    const tempPath = join('/tmp', `audio-${Date.now()}.webm`)
     await writeFile(tempPath, buffer)
 
-    // Set up the speech configuration
-    const speechConfig = sdk.SpeechConfig.fromSubscription(
-      process.env.AZURE_SPEECH_KEY!,
-      process.env.AZURE_SPEECH_REGION!
-    )
-    
-    // Create the audio configuration
-    const audioConfig = sdk.AudioConfig.fromWavFileInput(tempPath)
-    
-    // Create the speech recognizer
-    const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig)
+    try {
+      // Convert WebM to WAV using ffmpeg
+      const wavPath = tempPath.replace('.webm', '.wav')
+      await execAsync(`ffmpeg -i ${tempPath} -ar 16000 -ac 1 -c:a pcm_s16le ${wavPath}`)
 
-    return new Promise((resolve) => {
-      let transcription = ''
-
-      recognizer.recognized = (s, e) => {
-        if (e.result.reason === sdk.ResultReason.RecognizedSpeech) {
-          transcription += e.result.text + ' '
-        }
-      }
-
-      recognizer.recognizeOnceAsync(
-        result => {
-          recognizer.close()
-          resolve(NextResponse.json({ text: transcription.trim() }))
-        },
-        error => {
-          console.error('Speech recognition error:', error)
-          recognizer.close()
-          resolve(NextResponse.json(
-            { error: 'Failed to transcribe audio' },
-            { status: 500 }
-          ))
-        }
+      // Transcribe using whisper.cpp
+      const { stdout } = await execAsync(
+        `${WHISPER_PATH} -m ${MODEL_PATH} -f ${wavPath} -otxt -l auto`
       )
-    })
+
+      // Clean up temporary files
+      await execAsync(`rm ${tempPath} ${wavPath}`)
+
+      return NextResponse.json({ text: stdout.trim() })
+    } catch (error) {
+      console.error('Transcription error:', error)
+      return NextResponse.json(
+        { error: 'Failed to transcribe audio' },
+        { status: 500 }
+      )
+    }
   } catch (error) {
-    console.error('Transcription error:', error)
+    console.error('Request handling error:', error)
     return NextResponse.json(
-      { error: 'Failed to transcribe audio' },
+      { error: 'Failed to process request' },
       { status: 500 }
     )
   }
