@@ -1,8 +1,7 @@
-import { List, Popconfirm } from 'antd'
-import { DeleteOutlined } from '@ant-design/icons'
 import { Note } from '@/types'
 import { useTheme } from '@/contexts/ThemeContext'
-
+import { Card, CardBody, Button, Popover } from '@nextui-org/react'
+import { Trash2 } from 'lucide-react'
 
 interface NotesListProps {
   notes: Note[]
@@ -14,52 +13,73 @@ interface NotesListProps {
 export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }: NotesListProps) {
   const { isDarkMode } = useTheme()
   return (
-    <List
-
-      className="h-full overflow-auto"
-      dataSource={notes}
-      split={false}
-      renderItem={(note) => (
-        <List.Item
-          className={`
-            transition-colors duration-150 py-3 border-0 mb-1 rounded
-            ${isDarkMode
-              ? `hover:bg-gray-800 ${selectedNoteId === note.id ? 'bg-gray-700' : ''}`
-              : `hover:bg-gray-100 ${selectedNoteId === note.id ? 'bg-gray-200' : ''}`
-            }
-          `}
-          onClick={() => onSelectNote(note)}
+    <div className="h-full overflow-auto space-y-2 p-2">
+      {notes.map((note) => (
+        <Card
+          key={note.id}
+          isPressable
+          isHoverable
+          className={`w-full ${
+            selectedNoteId === note.id 
+              ? isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
+              : ''
+          }`}
+          onPress={() => onSelectNote(note)}
         >
-          <div className="flex items-center w-full gap-3 px-4">
-            <div className="flex-1 min-w-0">
-              <h3 className={`font-medium truncate ${isDarkMode ? 'text-white' : ''}`}>
-                {note.title || 'Untitled'}
-              </h3>
-              <p className={`truncate text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                {note.content.replace(/<[^>]*>/g, '').slice(0, 100)}
-              </p>
+          <CardBody className="p-3">
+            <div className="flex items-center w-full gap-3">
+              <div className="flex-1 min-w-0">
+                <h3 className={`font-medium truncate ${isDarkMode ? 'text-white' : ''}`}>
+                  {note.title || 'Untitled'}
+                </h3>
+                <p className={`truncate text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {note.content.replace(/<[^>]*>/g, '').slice(0, 100)}
+                </p>
+              </div>
+              <Popover placement="left">
+                <Popover.Trigger>
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                    color="danger"
+                    onPress={(e) => e.stopPropagation()}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </Popover.Trigger>
+                <Popover.Content>
+                  <div className="px-1 py-2">
+                    <div className="text-small font-bold">Delete note</div>
+                    <div className="text-tiny">Are you sure you want to delete this note?</div>
+                    <div className="flex gap-2 mt-2 justify-end">
+                      <Button 
+                        size="sm" 
+                        variant="flat" 
+                        color="default"
+                        onPress={(e) => e.stopPropagation()}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        size="sm"
+                        color="danger"
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          onDeleteNote(note.id);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </Popover.Content>
+              </Popover>
             </div>
-            <Popconfirm
-              title="Delete note"
-              description="Are you sure you want to delete this note?"
-              onConfirm={(e) => {
-                e?.stopPropagation();
-                onDeleteNote(note.id);
-              }}
-              onCancel={(e) => e?.stopPropagation()}
-            >
-              <DeleteOutlined
-                className={`
-                  transition-colors duration-150 text-lg flex-shrink-0
-                  ${isDarkMode ? 'text-red-400 hover:text-red-300' : 'text-red-500 hover:text-red-700'}
-                `}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </Popconfirm>
-          </div>
-        </List.Item>
-      )}
-    />
+          </CardBody>
+        </Card>
+      ))}
+    </div>
   )
 }
 
