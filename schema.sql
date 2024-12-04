@@ -11,18 +11,12 @@ create table categories (
 -- Enable Row Level Security for categories
 alter table categories enable row level security;
 
--- Create policy to allow all operations for authenticated users
-create policy "Allow all operations for authenticated users" on categories
+-- Create policy to allow all operations for all users
+create policy "Allow all operations for all users" on categories
   for all
-  to authenticated
+  to anon, authenticated
   using (true)
   with check (true);
-
--- Create policy to allow read-only access for anonymous users
-create policy "Allow read-only access for anonymous users" on categories
-  for select
-  to anon
-  using (true);
 
 -- Create notes table
 create table notes (
@@ -46,18 +40,12 @@ create index notes_is_starred_idx on notes(is_starred);
 -- Enable Row Level Security
 alter table notes enable row level security;
 
--- Create policy to allow all operations for authenticated users
-create policy "Allow all operations for authenticated users" on notes
+-- Create policy to allow all operations for all users
+create policy "Allow all operations for all users" on notes
   for all
-  to authenticated
+  to anon, authenticated
   using (true)
   with check (true);
-
--- Create policy to allow read-only access for anonymous users
-create policy "Allow read-only access for anonymous users" on notes
-  for select
-  to anon
-  using (true);
 
 -- Create function to update updated_at timestamp
 create or replace function update_updated_at_column()
