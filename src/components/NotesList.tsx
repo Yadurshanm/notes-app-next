@@ -60,40 +60,44 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
                   onOpenChange={(open) => setIsPopoverOpen(open ? note.id : null)}
                 >
                   <Popover.Trigger>
-                    <Button
-                      isIconOnly
-                      size="sm"
-                      variant="light"
-                      color="danger"
-                      className={isDarkMode ? 'hover:bg-red-900/20' : 'hover:bg-red-100'}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <span className="cursor-pointer">
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        color="danger"
+                        className={isDarkMode ? 'hover:bg-red-900/20' : 'hover:bg-red-100'}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </span>
                   </Popover.Trigger>
                   <Popover.Content>
-                    <div className="px-4 py-3">
-                      <div className="text-small font-bold">Delete note</div>
-                      <div className="text-tiny">Are you sure you want to delete this note?</div>
-                      <div className="flex gap-2 mt-4 justify-end">
-                        <Button 
-                          size="sm" 
-                          variant="light"
-                          onPress={() => setIsPopoverOpen(null)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          size="sm"
-                          color="danger"
-                          onPress={() => {
-                            onDeleteNote(note.id);
-                            setIsPopoverOpen(null);
-                          }}
-                        >
-                          Delete
-                        </Button>
+                    {(onClose) => (
+                      <div className="px-4 py-3">
+                        <div className="text-small font-bold">Delete note</div>
+                        <div className="text-tiny">Are you sure you want to delete this note?</div>
+                        <div className="flex gap-2 mt-4 justify-end">
+                          <Button 
+                            size="sm" 
+                            variant="light"
+                            onPress={onClose}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            size="sm"
+                            color="danger"
+                            onPress={() => {
+                              onDeleteNote(note.id);
+                              onClose();
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </Popover.Content>
                 </Popover>
               </div>
