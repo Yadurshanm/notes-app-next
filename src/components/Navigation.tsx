@@ -9,7 +9,10 @@ export function Navigation() {
   const { isDarkMode, toggleTheme } = useTheme()
   const pathname = usePathname()
 
-  const isActive = (path: string) => pathname === path
+  const isActive = (path: string) => {
+    if (path === '/') return pathname === '/'
+    return pathname.startsWith(path)
+  }
 
   const NavLink = ({ href, icon: Icon, label }: { href: string; icon: any; label: string }) => (
     <Link
@@ -27,7 +30,7 @@ export function Navigation() {
       `}
     >
       <Icon className="w-5 h-5" />
-      <span>{label}</span>
+      <span className="font-medium">{label}</span>
     </Link>
   )
 

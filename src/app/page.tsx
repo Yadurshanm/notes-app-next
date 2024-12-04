@@ -7,12 +7,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
 import { Version } from '@/components/Version'
 import { toast } from 'sonner'
-import {
-  Plus,
-  Search,
-  Sun,
-  Moon,
-} from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { supabase } from '@/lib/supabase'
@@ -20,6 +15,7 @@ import { Note } from '@/types'
 import { NotesList } from '@/components/NotesList'
 import { Editor } from '@/components/Editor'
 import { AppLayout } from '@/components/AppLayout'
+import { useSearchParams } from 'next/navigation'
 
 export default function Home() {
   const [notes, setNotes] = useState<Note[]>([])
@@ -29,10 +25,11 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
-  const { isDarkMode, toggleTheme } = useTheme()
+  const { isDarkMode } = useTheme()
   const searchInputRef = useRef<HTMLInputElement>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout>()
   const createTimeoutRef = useRef<NodeJS.Timeout>()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     fetchNotes()
@@ -41,6 +38,16 @@ export default function Home() {
       if (createTimeoutRef.current) clearTimeout(createTimeoutRef.current)
     }
   }, [])
+
+  useEffect(() => {
+    const noteId = searchParams.get('note')
+    if (noteId && notes.length > 0) {
+      const note = notes.find(n => n.id === noteId)
+      if (note) {
+        handleNoteSelect(note)
+      }
+    }
+  }, [notes, searchParams])
 
   const fetchNotes = async () => {
     try {
@@ -242,18 +249,22 @@ export default function Home() {
 
   if (loading || error) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        {loading ? (
-          <LoadingSpinner message="Loading notes..." />
-        ) : (
-          <div className="text-center">
-            <p className="text-red-500 mb-4">{error}</p>
-            <Button onClick={fetchNotes}>
-              Retry
-            </Button>
+      <AppLayout
+        content={
+          <div className="h-screen flex items-center justify-center">
+            {loading ? (
+              <LoadingSpinner message="Loading notes..." />
+            ) : (
+              <div className="text-center">
+                <p className="text-red-500 mb-4">{error}</p>
+                <Button onClick={fetchNotes}>
+                  Retry
+                </Button>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        }
+      />
     )
   }
 
@@ -269,12 +280,6 @@ export default function Home() {
             <Plus className="h-4 w-4 mr-2" />
             New Note
             <span className="ml-1 text-xs opacity-70">(⌘N)</span>
-          </Button>
-          <Button
-            onClick={toggleTheme}
-            title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
-          >
-            {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
         </div>
         <Input
