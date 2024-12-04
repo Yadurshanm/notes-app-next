@@ -1,59 +1,63 @@
 'use client'
 
 import { ThemeProvider } from '@/contexts/ThemeContext'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 import { ConfigProvider, theme } from 'antd'
-import { useTheme } from '@/contexts/ThemeContext'
 
 interface ProvidersProps {
   children: ReactNode
 }
 
-function AntConfigProvider({ children }: ProvidersProps) {
-  const { isDarkMode } = useTheme()
-
-  return (
-    <ConfigProvider
-      theme={{
-        algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
-        token: {
-          colorPrimary: '#3b82f6',
-          borderRadius: 6,
-        },
-        components: {
-          Button: {
-            // Disable the wave animation
-            animation: false,
-            // Use box-shadow for hover effect instead
-            styleValue: {
-              boxShadow: 'none',
-              '&:hover': {
-                opacity: 0.85,
-              },
-            },
-          },
-          Wave: {
-            // Disable wave effect globally
-            disabled: true,
-          },
-        },
-      }}
-    >
-      {children}
-    </ConfigProvider>
-  )
-}
-
 export function Providers({ children }: ProvidersProps) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen">
+        <div className="h-screen flex items-center justify-center">
+          <div className="animate-pulse">Loading...</div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <ThemeProvider>
-      <AntConfigProvider>
+      <ConfigProvider
+        theme={{
+          algorithm: document.documentElement.classList.contains('dark') 
+            ? theme.darkAlgorithm 
+            : theme.defaultAlgorithm,
+          token: {
+            colorPrimary: '#3b82f6',
+            borderRadius: 6,
+          },
+          components: {
+            Button: {
+              animation: false,
+              styleValue: {
+                boxShadow: 'none',
+                '&:hover': {
+                  opacity: 0.85,
+                },
+              },
+            },
+            Wave: {
+              disabled: true,
+            },
+          },
+        }}
+      >
         <div className="min-h-screen">
           {children}
           <Toaster richColors />
         </div>
-      </AntConfigProvider>
+      </ConfigProvider>
     </ThemeProvider>
   )
 }

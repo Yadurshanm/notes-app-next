@@ -32,7 +32,11 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     setMounted(true)
     const savedTheme = localStorage.getItem('theme')
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    setIsDarkMode(savedTheme === 'dark' || (!savedTheme && prefersDark))
+    const initialDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark)
+    setIsDarkMode(initialDarkMode)
+    if (initialDarkMode) {
+      document.documentElement.classList.add('dark')
+    }
   }, [])
 
   useEffect(() => {
@@ -51,18 +55,12 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }
 
   if (!mounted) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="animate-pulse">Loading...</div>
-      </div>
-    )
+    return null
   }
 
   return (
     <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-      <div className={isDarkMode ? 'dark' : 'light'}>
-        {children}
-      </div>
+      {children}
     </ThemeContext.Provider>
   )
 }
