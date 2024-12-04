@@ -1,24 +1,49 @@
 # Notes App
 
-A simple notes application built with Next.js, Ant Design, TipTap editor, and Supabase.
+A modern note-taking application built with Next.js and Supabase.
 
 ## Features
 
-- Create, read, update notes
-- Rich text editing with TipTap
-- Real-time updates
-- Clean and modern UI with Ant Design
-- Responsive layout
-- Automatic saving
+### Version 1.0.0 (Current)
+- 📝 Rich text editing with TipTap
+- 🏷️ Tag support for better organization
+- 📤 Export notes to Markdown or HTML
+- 🌓 Dark mode support
+- ⌨️ Keyboard shortcuts
+- 💾 Auto-save functionality
+- 🔄 Real-time sync with Supabase
+- 🔍 Full-text search
+- 📱 Responsive design
 
-## Technologies Used
+### Version 0.2.0
+- Migrated from Ant Design to native components
+- Improved performance and bundle size
+- Better error handling
+- Enhanced accessibility
+- Improved dark mode support
 
-- Next.js
-- TypeScript
-- Ant Design
-- TipTap Editor
-- Supabase
-- Tailwind CSS
+### Version 0.1.0
+- Initial release
+- Basic note creation and editing
+- Supabase integration
+- Basic search functionality
+
+## Keyboard Shortcuts
+
+- `⌘ N` - Create new note
+- `⌘ S` - Save current note
+- `⌘ K` - Search notes
+- `⌘ /` - Show keyboard shortcuts
+
+## Tech Stack
+
+- Next.js 13+ with App Router
+- TypeScript for type safety
+- Tailwind CSS for styling
+- TipTap for rich text editing
+- Supabase for backend and real-time sync
+- Lucide React for icons
+- Custom components for UI
 
 ## Getting Started
 
