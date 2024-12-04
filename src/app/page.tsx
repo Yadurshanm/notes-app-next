@@ -30,9 +30,9 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const { isDarkMode, toggleTheme } = useTheme()
-  const searchInputRef = useRef<InputRef>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout>()
   const createTimeoutRef = useRef<NodeJS.Timeout>()
+  const [searchInput, setSearchInput] = useState<InputRef | null>(null)
 
   useEffect(() => {
     fetchNotes()
@@ -236,7 +236,7 @@ export default function Home() {
   useKeyboardShortcuts({
     onNewNote: createNote,
     onSave: updateNote,
-    onSearch: () => searchInputRef.current?.focus(),
+    onSearch: () => searchInput?.focus(),
   })
 
   if (loading || error) {
@@ -277,7 +277,7 @@ export default function Home() {
           </Tooltip>
         </div>
         <Input
-          ref={searchInputRef}
+          ref={(input) => setSearchInput(input)}
           placeholder="Search notes... (⌘K)"
           prefix={<SearchOutlined className="text-gray-400" />}
           value={searchQuery}
