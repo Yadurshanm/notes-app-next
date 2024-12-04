@@ -88,7 +88,7 @@ export default function Home() {
         category_id: selectedCategory,
         tags: [],
         is_starred: false,
-        order: notes.length
+        order: notes.filter(n => n.category_id === selectedCategory).length
       }
 
       const { data, error } = await supabase

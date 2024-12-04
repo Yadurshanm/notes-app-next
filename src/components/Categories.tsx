@@ -12,6 +12,7 @@ interface CategoriesProps {
   selectedCategoryId: string | null
   onSelectCategory: (categoryId: string | null) => void
   onUpdateCategories: (categories: Category[]) => void
+  onCreateNote: (categoryId: string | null) => void
 }
 
 export function Categories({
@@ -137,23 +138,43 @@ export function Categories({
                   `}
                 />
               ) : (
-                category.name
+                <span className="flex-1">{category.name}</span>
               )}
             </button>
 
-            <button
-              onClick={() => deleteCategory(category.id)}
-              className={`
-                p-2 rounded-md opacity-0 group-hover:opacity-100
-                transition-opacity
-                ${isDarkMode
-                  ? 'hover:bg-gray-800 text-gray-400 hover:text-red-400'
-                  : 'hover:bg-gray-100 text-gray-500 hover:text-red-500'
-                }
-              `}
-            >
-              <X className="w-3 h-3" />
-            </button>
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onCreateNote(category.id)
+                }}
+                className={`
+                  p-2 rounded-md
+                  ${isDarkMode
+                    ? 'hover:bg-gray-800 text-gray-400 hover:text-blue-400'
+                    : 'hover:bg-gray-100 text-gray-500 hover:text-blue-500'
+                  }
+                `}
+              >
+                <Plus className="w-3 h-3" />
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  deleteCategory(category.id)
+                }}
+                className={`
+                  p-2 rounded-md
+                  ${isDarkMode
+                    ? 'hover:bg-gray-800 text-gray-400 hover:text-red-400'
+                    : 'hover:bg-gray-100 text-gray-500 hover:text-red-500'
+                  }
+                `}
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
           </div>
         ))}
       </div>

@@ -75,6 +75,12 @@ export function Sidebar({
           selectedCategoryId={selectedCategoryId}
           onSelectCategory={onSelectCategory}
           onUpdateCategories={onUpdateCategories}
+          onCreateNote={(categoryId) => {
+            onCreateNote()
+            if (categoryId) {
+              onSelectCategory(categoryId)
+            }
+          }}
         />
       </div>
 
