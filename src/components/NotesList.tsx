@@ -61,42 +61,37 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
                 placement="left"
                 isOpen={isPopoverOpen === note.id}
                 onOpenChange={(open) => handlePopoverOpenChange(open, note.id)}
-                showArrow
-                backdrop="opaque"
               >
-                <Popover.Trigger>
-                  <Button
-                    isIconOnly
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    onClick={(e) => e.stopPropagation()}
-                    className={isDarkMode ? 'hover:bg-red-900/20' : 'hover:bg-red-100'}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </Popover.Trigger>
-                <Popover.Content className={isDarkMode ? 'dark text-white' : ''}>
-                  <div className="px-1 py-2">
+                <Button
+                  as={Popover.Trigger}
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  color="danger"
+                  onPress={(e) => e.stopPropagation()}
+                  className={isDarkMode ? 'hover:bg-red-900/20' : 'hover:bg-red-100'}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+                <Popover.Content>
+                  <div className="px-4 py-3">
                     <div className="text-small font-bold">Delete note</div>
                     <div className="text-tiny">Are you sure you want to delete this note?</div>
-                    <div className="flex gap-2 mt-2 justify-end">
+                    <div className="flex gap-2 mt-4 justify-end">
                       <Button 
                         size="sm" 
-                        variant="flat" 
-                        color="default"
-                        onClick={(e) => {
+                        variant="light" 
+                        onPress={(e) => {
                           e.stopPropagation();
                           setIsPopoverOpen(null);
                         }}
-                        autoFocus
                       >
                         Cancel
                       </Button>
                       <Button
                         size="sm"
                         color="danger"
-                        onClick={(e) => {
+                        onPress={(e) => {
                           e.stopPropagation();
                           onDeleteNote(note.id);
                           setIsPopoverOpen(null);
