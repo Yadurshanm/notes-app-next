@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { ConfigProvider, theme } from 'antd'
 
 interface ThemeContextType {
   isDarkMode: boolean
@@ -13,11 +14,7 @@ const ThemeContext = createContext<ThemeContextType>({
 })
 
 export function useTheme() {
-  const context = useContext(ThemeContext)
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider')
-  }
-  return context
+  return useContext(ThemeContext)
 }
 
 interface ThemeProviderProps {
@@ -25,11 +22,9 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [mounted, setMounted] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
     const savedTheme = localStorage.getItem('theme')
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const initialDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark)
@@ -40,27 +35,31 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }, [])
 
   useEffect(() => {
-    if (mounted) {
-      localStorage.setItem('theme', isDarkMode ? 'dark' : 'light')
-      if (isDarkMode) {
-        document.documentElement.classList.add('dark')
-      } else {
-        document.documentElement.classList.remove('dark')
-      }
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light')
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
     }
-  }, [isDarkMode, mounted])
+  }, [isDarkMode])
 
   const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode)
-  }
-
-  if (!mounted) {
-    return null
+    setIsDarkMode(prev => !prev)
   }
 
   return (
     <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-      {children}
+      <ConfigProvider
+        theme={{
+          algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+          token: {
+            colorPrimary: '#3b82f6',
+            borderRadius: 6,
+          },
+        }}
+      >
+        {children}
+      </ConfigProvider>
     </ThemeContext.Provider>
   )
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
@@ -32,7 +33,7 @@ interface EditorProps {
   onChange: (content: string) => void
 }
 
-export function Editor({ content, onChange }: EditorProps) {
+function EditorComponent({ content, onChange }: EditorProps) {
   const { isDarkMode } = useTheme()
   const [isMounted, setIsMounted] = useState(false)
 
@@ -81,13 +82,12 @@ export function Editor({ content, onChange }: EditorProps) {
         },
       }),
     ],
-    autofocus: 'end',
     editorProps: {
       attributes: {
         class: 'prose max-w-none w-full focus:outline-none',
       },
     },
-    content: content,
+    content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
     },
@@ -203,7 +203,7 @@ export function Editor({ content, onChange }: EditorProps) {
               onClick={button.onClick}
               disabled={button.disabled}
               type={button.active ? "primary" : "default"}
-              className="w-8 h-8 flex items-center justify-center transition-opacity hover:opacity-80"
+              className="w-8 h-8 flex items-center justify-center"
             />
           </Tooltip>
         ))}
@@ -219,3 +219,7 @@ export function Editor({ content, onChange }: EditorProps) {
     </div>
   )
 }
+
+export const Editor = dynamic(() => Promise.resolve(EditorComponent), {
+  ssr: false,
+}) as typeof EditorComponent

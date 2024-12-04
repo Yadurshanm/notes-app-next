@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  transpilePackages: ['@ant-design/icons'],
   webpack: (config) => {
-    config.externals = [...config.externals, { canvas: "canvas" }];  // required by @tiptap/pm
+    config.externals = [...config.externals, { canvas: "canvas" }];
     return config;
   },
 }
