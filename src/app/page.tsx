@@ -5,6 +5,7 @@ import { Button } from '@/components/Button'
 import { Input } from '@/components/Input'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
+import { AIConnectionStatus } from '@/components/AIConnectionStatus'
 import { Version } from '@/components/Version'
 import { toast } from 'sonner'
 import { Plus, Search } from 'lucide-react'
@@ -299,8 +300,11 @@ export default function Home() {
         />
       </div>
       <div className={`p-2 border-t flex items-center justify-between text-xs ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}`}>
-        <ConnectionStatus />
-        <Version />
+        <div className="flex items-center gap-4">
+          <ConnectionStatus />
+          <AIConnectionStatus />
+          <Version />
+        </div>
       </div>
     </div>
   )
