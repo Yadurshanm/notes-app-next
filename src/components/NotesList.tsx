@@ -60,19 +60,19 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
               <Popover 
                 placement="left"
                 isOpen={isPopoverOpen === note.id}
-                onOpenChange={(open) => handlePopoverOpenChange(open, note.id)}
+                onOpenChange={(open) => setIsPopoverOpen(open ? note.id : null)}
               >
-                <Button
-                  as={Popover.Trigger}
-                  isIconOnly
-                  size="sm"
-                  variant="light"
-                  color="danger"
-                  onPress={(e) => e.stopPropagation()}
-                  className={isDarkMode ? 'hover:bg-red-900/20' : 'hover:bg-red-100'}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                    color="danger"
+                    className={isDarkMode ? 'hover:bg-red-900/20' : 'hover:bg-red-100'}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
                 <Popover.Content>
                   <div className="px-4 py-3">
                     <div className="text-small font-bold">Delete note</div>
@@ -80,8 +80,8 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
                     <div className="flex gap-2 mt-4 justify-end">
                       <Button 
                         size="sm" 
-                        variant="light" 
-                        onPress={(e) => {
+                        variant="light"
+                        onClick={(e) => {
                           e.stopPropagation();
                           setIsPopoverOpen(null);
                         }}
@@ -91,7 +91,7 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
                       <Button
                         size="sm"
                         color="danger"
-                        onPress={(e) => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           onDeleteNote(note.id);
                           setIsPopoverOpen(null);
