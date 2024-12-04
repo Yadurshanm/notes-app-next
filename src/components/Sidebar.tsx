@@ -5,6 +5,8 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { Button } from './Button'
 import { Input } from './Input'
 import { Categories } from './Categories'
+import { ConnectionStatus } from './ConnectionStatus'
+import { Version } from './Version'
 import { Note, Category } from '@/types'
 import { Plus, Search, Star, ChevronRight, ChevronDown } from 'lucide-react'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
@@ -202,6 +204,17 @@ export function Sidebar({
               )}
             </Droppable>
           </DragDropContext>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className={`
+        p-2 border-t flex items-center justify-between text-xs
+        ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}
+      `}>
+        <div className="flex items-center gap-4">
+          <ConnectionStatus />
+          <Version />
         </div>
       </div>
     </div>
