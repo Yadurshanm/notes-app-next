@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { Button, Input, Tooltip } from 'antd'
+import type { InputRef } from 'antd/es/input'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
 import { Version } from '@/components/Version'
@@ -29,7 +30,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const { isDarkMode, toggleTheme } = useTheme()
-  const searchInputRef = useRef<HTMLInputElement>(null)
+  const searchInputRef = useRef<InputRef>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout>()
   const createTimeoutRef = useRef<NodeJS.Timeout>()
 
@@ -283,6 +284,7 @@ export default function Home() {
           onChange={(e) => setSearchQuery(e.target.value)}
           allowClear
           className={isDarkMode ? 'ant-input-dark' : ''}
+          onFocus={(e) => e.target.select()}
         />
       </div>
       <div className="flex-1 overflow-hidden">
@@ -309,6 +311,7 @@ export default function Home() {
           onChange={(e) => handleTitleChange(e.target.value)}
           size="large"
           className={isDarkMode ? 'ant-input-dark' : ''}
+          bordered={false}
         />
       </div>
       <div className="flex-1 p-4 overflow-auto">
