@@ -9,21 +9,21 @@ import Superscript from '@tiptap/extension-superscript'
 import Subscript from '@tiptap/extension-subscript'
 import Link from '@tiptap/extension-link'
 import { useEffect, useState } from 'react'
-import { Button, ButtonGroup, Tooltip } from '@nextui-org/react'
+import { Button, Space, Tooltip } from 'antd'
 import { useTheme } from '@/contexts/ThemeContext'
 import {
-  BoldIcon,
-  ItalicIcon,
-  UnderlineIcon,
-  ListIcon,
-  ListOrderedIcon,
-  StrikethroughIcon,
-  AlignLeftIcon,
-  AlignCenterIcon,
-  AlignRightIcon,
-  RedoIcon,
-  UndoIcon,
-} from 'lucide-react'
+  BoldOutlined,
+  ItalicOutlined,
+  UnderlineOutlined,
+  UnorderedListOutlined,
+  OrderedListOutlined,
+  Strikeoutlined,
+  AlignLeftOutlined,
+  AlignCenterOutlined,
+  AlignRightOutlined,
+  RedoOutlined,
+  UndoOutlined,
+} from '@ant-design/icons'
 
 interface EditorProps {
   content: string
@@ -102,20 +102,15 @@ export function Editor({ content, onChange }: EditorProps) {
   if (!isMounted || !editor) {
     return (
       <div className="prose max-w-none w-full">
-        <ButtonGroup 
-          variant="flat" 
-          className="mb-4 p-2 gap-1 flex flex-wrap"
-        >
+        <Space wrap className="mb-4 p-2">
           {[...Array(10)].map((_, i) => (
             <Button
               key={i}
-              isIconOnly
-              isDisabled
-              variant="flat"
-              className="min-w-unit-8 w-unit-8 h-unit-8 animate-pulse"
+              disabled
+              className="w-8 h-8 animate-pulse"
             />
           ))}
-        </ButtonGroup>
+        </Space>
         <div className={`min-h-[200px] border rounded-md p-4 ${
           isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
         }`}>
@@ -132,67 +127,67 @@ export function Editor({ content, onChange }: EditorProps) {
   const editorButtons = [
     {
       tooltip: 'Undo (⌘Z)',
-      icon: <UndoIcon className="h-4 w-4" />,
+      icon: <UndoOutlined />,
       onClick: () => editor?.chain().focus().undo().run(),
       disabled: !editor?.can().undo(),
     },
     {
       tooltip: 'Redo (⌘⇧Z)',
-      icon: <RedoIcon className="h-4 w-4" />,
+      icon: <RedoOutlined />,
       onClick: () => editor?.chain().focus().redo().run(),
       disabled: !editor?.can().redo(),
     },
     {
       tooltip: 'Bold (⌘B)',
-      icon: <BoldIcon className="h-4 w-4" />,
+      icon: <BoldOutlined />,
       onClick: () => editor?.chain().focus().toggleBold().run(),
       active: editor?.isActive('bold'),
     },
     {
       tooltip: 'Italic (⌘I)',
-      icon: <ItalicIcon className="h-4 w-4" />,
+      icon: <ItalicOutlined />,
       onClick: () => editor?.chain().focus().toggleItalic().run(),
       active: editor?.isActive('italic'),
     },
     {
       tooltip: 'Underline (⌘U)',
-      icon: <UnderlineIcon className="h-4 w-4" />,
+      icon: <UnderlineOutlined />,
       onClick: () => editor?.chain().focus().toggleUnderline().run(),
       active: editor?.isActive('underline'),
     },
     {
       tooltip: 'Strike (⌘⇧X)',
-      icon: <StrikethroughIcon className="h-4 w-4" />,
+      icon: <Strikeoutlined />,
       onClick: () => editor?.chain().focus().toggleStrike().run(),
       active: editor?.isActive('strike'),
     },
     {
       tooltip: 'Bullet List (⌘⇧8)',
-      icon: <ListIcon className="h-4 w-4" />,
+      icon: <UnorderedListOutlined />,
       onClick: () => editor?.chain().focus().toggleBulletList().run(),
       active: editor?.isActive('bulletList'),
     },
     {
       tooltip: 'Ordered List (⌘⇧7)',
-      icon: <ListOrderedIcon className="h-4 w-4" />,
+      icon: <OrderedListOutlined />,
       onClick: () => editor?.chain().focus().toggleOrderedList().run(),
       active: editor?.isActive('orderedList'),
     },
     {
       tooltip: 'Align Left (⌘⇧L)',
-      icon: <AlignLeftIcon className="h-4 w-4" />,
+      icon: <AlignLeftOutlined />,
       onClick: () => editor?.chain().focus().setTextAlign('left').run(),
       active: editor?.isActive({ textAlign: 'left' }),
     },
     {
       tooltip: 'Align Center (⌘⇧E)',
-      icon: <AlignCenterIcon className="h-4 w-4" />,
+      icon: <AlignCenterOutlined />,
       onClick: () => editor?.chain().focus().setTextAlign('center').run(),
       active: editor?.isActive({ textAlign: 'center' }),
     },
     {
       tooltip: 'Align Right (⌘⇧R)',
-      icon: <AlignRightIcon className="h-4 w-4" />,
+      icon: <AlignRightOutlined />,
       onClick: () => editor?.chain().focus().setTextAlign('right').run(),
       active: editor?.isActive({ textAlign: 'right' }),
     },
@@ -200,25 +195,19 @@ export function Editor({ content, onChange }: EditorProps) {
 
   return (
     <div className={`prose max-w-none w-full ${isDarkMode ? 'prose-invert' : ''}`}>
-      <ButtonGroup 
-        variant="flat" 
-        className="mb-4 p-2 gap-1 flex flex-wrap"
-      >
+      <Space wrap className="mb-4 p-2">
         {editorButtons.map((button, index) => (
-          <Tooltip key={index} content={button.tooltip}>
+          <Tooltip key={index} title={button.tooltip}>
             <Button
-              isIconOnly
+              icon={button.icon}
               onClick={button.onClick}
-              isDisabled={button.disabled}
-              color={button.active ? "primary" : "default"}
-              variant={button.active ? "solid" : "flat"}
-              className="min-w-unit-8 w-unit-8 h-unit-8"
-            >
-              {button.icon}
-            </Button>
+              disabled={button.disabled}
+              type={button.active ? "primary" : "default"}
+              className="w-8 h-8 flex items-center justify-center"
+            />
           </Tooltip>
         ))}
-      </ButtonGroup>
+      </Space>
       <EditorContent 
         editor={editor} 
         className={`min-h-[200px] border rounded-md p-4 ${
