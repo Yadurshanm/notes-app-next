@@ -1,17 +1,7 @@
 import { NextResponse } from 'next/server'
-import { OpenAIClient, AzureKeyCredential } from '@azure/openai'
 import { writeFile } from 'fs/promises'
 import { join } from 'path'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-
-const execAsync = promisify(exec)
-
-// Initialize Azure OpenAI client for backup transcription
-const client = new OpenAIClient(
-  process.env.AZURE_OPENAI_ENDPOINT!,
-  new AzureKeyCredential(process.env.AZURE_OPENAI_API_KEY!)
-)
+import * as sdk from 'microsoft-cognitiveservices-speech-sdk'
 
 export async function POST(request: Request) {
   try {
@@ -28,26 +18,45 @@ export async function POST(request: Request) {
     // Save the audio file temporarily
     const bytes = await audio.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const tempPath = join('/tmp', `audio-${Date.now()}.webm`)
+    const tempPath = join('/tmp', `audio-${Date.now()}.wav`)
     await writeFile(tempPath, buffer)
 
-    try {
-      // Try using local Whisper first
-      const { stdout } = await execAsync(`whisper ${tempPath} --model base --output_format txt`)
-      const text = stdout.trim()
-      
-      return NextResponse.json({ text })
-    } catch (whisperError) {
-      console.error('Local Whisper failed, falling back to Azure:', whisperError)
-      
-      // Fallback to Azure OpenAI Whisper
-      const response = await client.getAudioTranscription(
-        process.env.AZURE_OPENAI_WHISPER_DEPLOYMENT_ID!,
-        buffer
+    // Set up the speech configuration
+    const speechConfig = sdk.SpeechConfig.fromSubscription(
+      process.env.AZURE_SPEECH_KEY!,
+      process.env.AZURE_SPEECH_REGION!
+    )
+    
+    // Create the audio configuration
+    const audioConfig = sdk.AudioConfig.fromWavFileInput(tempPath)
+    
+    // Create the speech recognizer
+    const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig)
+
+    return new Promise((resolve) => {
+      let transcription = ''
+
+      recognizer.recognized = (s, e) => {
+        if (e.result.reason === sdk.ResultReason.RecognizedSpeech) {
+          transcription += e.result.text + ' '
+        }
+      }
+
+      recognizer.recognizeOnceAsync(
+        result => {
+          recognizer.close()
+          resolve(NextResponse.json({ text: transcription.trim() }))
+        },
+        error => {
+          console.error('Speech recognition error:', error)
+          recognizer.close()
+          resolve(NextResponse.json(
+            { error: 'Failed to transcribe audio' },
+            { status: 500 }
+          ))
+        }
       )
-      
-      return NextResponse.json({ text: response.text })
-    }
+    })
   } catch (error) {
     console.error('Transcription error:', error)
     return NextResponse.json(

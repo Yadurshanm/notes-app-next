@@ -29,6 +29,7 @@
     "autoprefixer": "^10.4.20",
     "framer-motion": "^11.13.1",
     "lucide-react": "^0.464.0",
+    "microsoft-cognitiveservices-speech-sdk": "^1.41.0",
     "next": "^15.0.3",
     "postcss": "^8.4.49",
     "react": "^18.3.1",

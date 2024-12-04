@@ -14,6 +14,7 @@ import Link from '@tiptap/extension-link'
 import { useEffect, useState } from 'react'
 import { Button } from '../Button'
 import { useTheme } from '@/contexts/ThemeContext'
+import { AIHelper } from '../AI/AIHelper'
 import {
   Bold,
   Italic,
@@ -221,8 +222,15 @@ function EditorComponent({ content, onChange, noteId }: EditorProps) {
 
   return (
     <div className={`prose max-w-none w-full ${isDarkMode ? 'prose-invert' : ''}`}>
-      <div className="flex flex-wrap gap-2 mb-4 p-2">
-        {editorButtons.map((button, index) => (
+      <div className="flex flex-col gap-2 mb-4 p-2">
+        <AIHelper 
+          currentContent={editor.getHTML()}
+          onAIResponse={(text) => {
+            editor.commands.setContent(text)
+          }}
+        />
+        <div className="flex flex-wrap gap-2">
+          {editorButtons.map((button, index) => (
           <div key={index} title={button.tooltip}>
             <Button
               size="sm"
