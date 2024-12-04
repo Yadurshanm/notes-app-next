@@ -80,6 +80,20 @@ export default function Home() {
 
   const createNote = async (categoryId?: string | null) => {
     const targetCategoryId = categoryId ?? selectedCategory
+    
+    // If we're creating a note in a category, make sure the category exists
+    if (targetCategoryId) {
+      const { data: categoryExists } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('id', targetCategoryId)
+        .single()
+
+      if (!categoryExists) {
+        toast.error('Category not found')
+        return
+      }
+    }
     try {
       const newNote = {
         title: 'Untitled',
