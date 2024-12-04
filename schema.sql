@@ -1,3 +1,7 @@
+-- Drop existing tables if they exist
+drop table if exists notes;
+drop table if exists categories;
+
 -- Create categories table
 create table categories (
   id uuid default gen_random_uuid() primary key,
@@ -17,6 +21,12 @@ create policy "Allow all operations for all users" on categories
   to anon, authenticated
   using (true)
   with check (true);
+
+-- Create trigger for categories updated_at
+create trigger update_categories_updated_at
+  before update on categories
+  for each row
+  execute function update_updated_at_column();
 
 -- Create notes table
 create table notes (

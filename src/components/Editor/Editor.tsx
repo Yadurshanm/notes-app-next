@@ -11,6 +11,7 @@ import TaskItem from '@tiptap/extension-task-item'
 import Superscript from '@tiptap/extension-superscript'
 import Subscript from '@tiptap/extension-subscript'
 import Link from '@tiptap/extension-link'
+import Image from '@tiptap/extension-image'
 import { useEffect, useState } from 'react'
 import { Button } from '../Button'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -28,16 +29,29 @@ import {
   Redo,
   Undo,
   Code,
+  Image as ImageIcon,
 } from 'lucide-react'
+import { CategorySelector } from '../CategorySelector'
+import { Category } from '@/types'
 import { CodeBlock } from './extensions/CodeBlock'
 
 interface EditorProps {
   content: string
   onChange: (content: string) => void
-  noteId?: string // Add noteId prop to track current note
+  noteId?: string
+  categories: Category[]
+  selectedCategoryId: string | null
+  onSelectCategory: (categoryId: string | null) => void
 }
 
-function EditorComponent({ content, onChange, noteId }: EditorProps) {
+function EditorComponent({
+  content,
+  onChange,
+  noteId,
+  categories,
+  selectedCategoryId,
+  onSelectCategory,
+}: EditorProps) {
   const { isDarkMode } = useTheme()
   const [isMounted, setIsMounted] = useState(false)
   const [currentNoteId, setCurrentNoteId] = useState(noteId)
@@ -97,6 +111,11 @@ function EditorComponent({ content, onChange, noteId }: EditorProps) {
         },
       }),
       CodeBlock,
+      Image.configure({
+        HTMLAttributes: {
+          class: 'max-w-full rounded-lg',
+        },
+      }),
     ],
     editorProps: {
       attributes: {
@@ -143,6 +162,13 @@ function EditorComponent({ content, onChange, noteId }: EditorProps) {
         </div>
       </div>
     )
+  }
+
+  const handleImageUpload = () => {
+    const url = window.prompt('Enter image URL:')
+    if (url) {
+      editor?.chain().focus().setImage({ src: url }).run()
+    }
   }
 
   const editorButtons = [
@@ -218,18 +244,30 @@ function EditorComponent({ content, onChange, noteId }: EditorProps) {
       onClick: () => editor?.chain().focus().setTextAlign('right').run(),
       active: editor?.isActive({ textAlign: 'right' }),
     },
+    {
+      tooltip: 'Insert Image',
+      icon: <ImageIcon className="w-4 h-4" />,
+      onClick: handleImageUpload,
+    },
   ]
 
   return (
     <div className={`prose max-w-none w-full ${isDarkMode ? 'prose-invert' : ''}`}>
       <div className="flex flex-col gap-2 mb-4 p-2">
-        <AIAssistant 
-          currentContent={editor.getHTML()}
-          onInsertText={(text) => {
-            editor.commands.setContent(text)
-            editor.commands.focus()
-          }}
-        />
+        <div className="flex items-center justify-between">
+          <CategorySelector
+            categories={categories}
+            selectedCategoryId={selectedCategoryId}
+            onSelectCategory={onSelectCategory}
+          />
+          <AIAssistant 
+            currentContent={editor.getHTML()}
+            onInsertText={(text) => {
+              editor.commands.setContent(text)
+              editor.commands.focus()
+            }}
+          />
+        </div>
         <div className="flex flex-wrap gap-2">
           {editorButtons.map((button, index) => (
           <div key={index} title={button.tooltip}>
