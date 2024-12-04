@@ -12,7 +12,7 @@ import Superscript from '@tiptap/extension-superscript'
 import Subscript from '@tiptap/extension-subscript'
 import Link from '@tiptap/extension-link'
 import { useEffect, useState } from 'react'
-import { Button, Space, Tooltip } from 'antd'
+import { Button } from './Button'
 import { useTheme } from '@/contexts/ThemeContext'
 import {
   BoldOutlined,
@@ -20,7 +20,7 @@ import {
   UnderlineOutlined,
   UnorderedListOutlined,
   OrderedListOutlined,
-  StrikethroughOutlined,
+  StrikeOutlined,
   AlignLeftOutlined,
   AlignCenterOutlined,
   AlignRightOutlined,
@@ -102,15 +102,17 @@ function EditorComponent({ content, onChange }: EditorProps) {
   if (!isMounted || !editor) {
     return (
       <div className="prose max-w-none w-full">
-        <Space wrap className="mb-4 p-2">
+        <div className="flex flex-wrap gap-2 mb-4 p-2">
           {[...Array(10)].map((_, i) => (
             <Button
               key={i}
               disabled
+              size="sm"
+              isIconOnly
               className="w-8 h-8 animate-pulse"
             />
           ))}
-        </Space>
+        </div>
         <div className={`min-h-[200px] border rounded-md p-4 ${
           isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
         }`}>
@@ -157,7 +159,7 @@ function EditorComponent({ content, onChange }: EditorProps) {
     },
     {
       tooltip: 'Strike (⌘⇧X)',
-      icon: <StrikethroughOutlined />,
+      icon: <StrikeOutlined />,
       onClick: () => editor?.chain().focus().toggleStrike().run(),
       active: editor?.isActive('strike'),
     },
@@ -195,19 +197,22 @@ function EditorComponent({ content, onChange }: EditorProps) {
 
   return (
     <div className={`prose max-w-none w-full ${isDarkMode ? 'prose-invert' : ''}`}>
-      <Space wrap className="mb-4 p-2">
+      <div className="flex flex-wrap gap-2 mb-4 p-2">
         {editorButtons.map((button, index) => (
-          <Tooltip key={index} title={button.tooltip}>
+          <div key={index} title={button.tooltip}>
             <Button
-              icon={button.icon}
+              size="sm"
+              isIconOnly
+              variant={button.active ? "primary" : "default"}
               onClick={button.onClick}
               disabled={button.disabled}
-              type={button.active ? "primary" : "default"}
-              className="w-8 h-8 flex items-center justify-center"
-            />
-          </Tooltip>
+              className="w-8 h-8"
+            >
+              {button.icon}
+            </Button>
+          </div>
         ))}
-      </Space>
+      </div>
       <EditorContent 
         editor={editor} 
         className={`min-h-[200px] border rounded-md p-4 ${
