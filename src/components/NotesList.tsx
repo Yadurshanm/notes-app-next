@@ -2,7 +2,7 @@ import { Note } from '@/types'
 import { useTheme } from '@/contexts/ThemeContext'
 import { Card, CardBody, Button, Popover } from '@nextui-org/react'
 import { Trash2, FileText } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 interface NotesListProps {
   notes: Note[]
@@ -14,6 +14,10 @@ interface NotesListProps {
 export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }: NotesListProps) {
   const { isDarkMode } = useTheme()
   const [isPopoverOpen, setIsPopoverOpen] = useState<string | null>(null)
+
+  const handlePopoverOpenChange = useCallback((open: boolean, noteId: string) => {
+    setIsPopoverOpen(open ? noteId : null)
+  }, [])
 
   if (notes.length === 0) {
     return (
@@ -39,24 +43,26 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
           className={`w-full ${
             selectedNoteId === note.id 
               ? isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
-              : ''
+              : isDarkMode ? 'bg-gray-800/50' : 'bg-white'
           }`}
           onPress={() => onSelectNote(note)}
         >
           <CardBody className="p-3">
             <div className="flex items-center w-full gap-3">
               <div className="flex-1 min-w-0">
-                <h3 className={`font-medium truncate ${isDarkMode ? 'text-white' : ''}`}>
+                <h3 className={`font-medium truncate ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                   {note.title || 'Untitled'}
                 </h3>
                 <p className={`truncate text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                  {note.content.replace(/<[^>]*>/g, '').slice(0, 100)}
+                  {(note.content || '').replace(/<[^>]*>/g, '').slice(0, 100)}
                 </p>
               </div>
               <Popover 
                 placement="left"
                 isOpen={isPopoverOpen === note.id}
-                onOpenChange={(open) => setIsPopoverOpen(open ? note.id : null)}
+                onOpenChange={(open) => handlePopoverOpenChange(open, note.id)}
+                showArrow
+                backdrop="opaque"
               >
                 <Popover.Trigger>
                   <Button
@@ -65,11 +71,12 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
                     variant="light"
                     color="danger"
                     onClick={(e) => e.stopPropagation()}
+                    className={isDarkMode ? 'hover:bg-red-900/20' : 'hover:bg-red-100'}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </Popover.Trigger>
-                <Popover.Content className={isDarkMode ? 'dark' : ''}>
+                <Popover.Content className={isDarkMode ? 'dark text-white' : ''}>
                   <div className="px-1 py-2">
                     <div className="text-small font-bold">Delete note</div>
                     <div className="text-tiny">Are you sure you want to delete this note?</div>
@@ -82,6 +89,7 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
                           e.stopPropagation();
                           setIsPopoverOpen(null);
                         }}
+                        autoFocus
                       >
                         Cancel
                       </Button>
@@ -107,4 +115,3 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
     </div>
   )
 }
-
