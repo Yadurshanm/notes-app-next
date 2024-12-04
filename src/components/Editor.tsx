@@ -12,21 +12,20 @@ import Superscript from '@tiptap/extension-superscript'
 import Subscript from '@tiptap/extension-subscript'
 import Link from '@tiptap/extension-link'
 import { useEffect, useState } from 'react'
-import { Button } from './Button'
 import { useTheme } from '@/contexts/ThemeContext'
 import {
-  BoldOutlined,
-  ItalicOutlined,
-  UnderlineOutlined,
-  UnorderedListOutlined,
-  OrderedListOutlined,
-  StrikeOutlined,
-  AlignLeftOutlined,
-  AlignCenterOutlined,
-  AlignRightOutlined,
-  RedoOutlined,
-  UndoOutlined,
-} from '@ant-design/icons'
+  Bold,
+  Italic,
+  Underline as UnderlineIcon,
+  List,
+  ListOrdered,
+  Strikethrough,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Redo,
+  Undo,
+} from 'lucide-react'
 
 interface EditorProps {
   content: string
@@ -104,12 +103,9 @@ function EditorComponent({ content, onChange }: EditorProps) {
       <div className="prose max-w-none w-full">
         <div className="flex flex-wrap gap-2 mb-4 p-2">
           {[...Array(10)].map((_, i) => (
-            <Button
+            <div
               key={i}
-              disabled
-              size="sm"
-              isIconOnly
-              className="w-8 h-8 animate-pulse"
+              className="w-8 h-8 rounded bg-gray-200 dark:bg-gray-700 animate-pulse"
             />
           ))}
         </div>
@@ -129,67 +125,67 @@ function EditorComponent({ content, onChange }: EditorProps) {
   const editorButtons = [
     {
       tooltip: 'Undo (⌘Z)',
-      icon: <UndoOutlined />,
+      icon: <Undo className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().undo().run(),
       disabled: !editor?.can().undo(),
     },
     {
       tooltip: 'Redo (⌘⇧Z)',
-      icon: <RedoOutlined />,
+      icon: <Redo className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().redo().run(),
       disabled: !editor?.can().redo(),
     },
     {
       tooltip: 'Bold (⌘B)',
-      icon: <BoldOutlined />,
+      icon: <Bold className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleBold().run(),
       active: editor?.isActive('bold'),
     },
     {
       tooltip: 'Italic (⌘I)',
-      icon: <ItalicOutlined />,
+      icon: <Italic className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleItalic().run(),
       active: editor?.isActive('italic'),
     },
     {
       tooltip: 'Underline (⌘U)',
-      icon: <UnderlineOutlined />,
+      icon: <UnderlineIcon className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleUnderline().run(),
       active: editor?.isActive('underline'),
     },
     {
       tooltip: 'Strike (⌘⇧X)',
-      icon: <StrikeOutlined />,
+      icon: <Strikethrough className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleStrike().run(),
       active: editor?.isActive('strike'),
     },
     {
       tooltip: 'Bullet List (⌘⇧8)',
-      icon: <UnorderedListOutlined />,
+      icon: <List className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleBulletList().run(),
       active: editor?.isActive('bulletList'),
     },
     {
       tooltip: 'Ordered List (⌘⇧7)',
-      icon: <OrderedListOutlined />,
+      icon: <ListOrdered className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleOrderedList().run(),
       active: editor?.isActive('orderedList'),
     },
     {
       tooltip: 'Align Left (⌘⇧L)',
-      icon: <AlignLeftOutlined />,
+      icon: <AlignLeft className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().setTextAlign('left').run(),
       active: editor?.isActive({ textAlign: 'left' }),
     },
     {
       tooltip: 'Align Center (⌘⇧E)',
-      icon: <AlignCenterOutlined />,
+      icon: <AlignCenter className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().setTextAlign('center').run(),
       active: editor?.isActive({ textAlign: 'center' }),
     },
     {
       tooltip: 'Align Right (⌘⇧R)',
-      icon: <AlignRightOutlined />,
+      icon: <AlignRight className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().setTextAlign('right').run(),
       active: editor?.isActive({ textAlign: 'right' }),
     },
@@ -199,18 +195,24 @@ function EditorComponent({ content, onChange }: EditorProps) {
     <div className={`prose max-w-none w-full ${isDarkMode ? 'prose-invert' : ''}`}>
       <div className="flex flex-wrap gap-2 mb-4 p-2">
         {editorButtons.map((button, index) => (
-          <div key={index} title={button.tooltip}>
-            <Button
-              size="sm"
-              isIconOnly
-              variant={button.active ? "primary" : "default"}
-              onClick={button.onClick}
-              disabled={button.disabled}
-              className="w-8 h-8"
-            >
-              {button.icon}
-            </Button>
-          </div>
+          <button
+            key={index}
+            title={button.tooltip}
+            onClick={button.onClick}
+            disabled={button.disabled}
+            className={`
+              w-8 h-8 flex items-center justify-center rounded-md
+              transition-all duration-200 focus:outline-none
+              disabled:opacity-50 disabled:cursor-not-allowed
+              active:scale-95
+              ${button.active
+                ? 'bg-blue-500 text-white hover:bg-blue-600'
+                : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
+              }
+            `}
+          >
+            {button.icon}
+          </button>
         ))}
       </div>
       <EditorContent 

@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.5.2",
     "@supabase/supabase-js": "^2.46.2",
     "@tailwindcss/typography": "^0.5.15",
     "@tiptap/extension-highlight": "^2.10.3",
@@ -26,7 +25,6 @@
     "@types/node": "^22.10.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "antd": "^5.22.3",
     "autoprefixer": "^10.4.20",
     "framer-motion": "^11.13.1",
     "lucide-react": "^0.464.0",
