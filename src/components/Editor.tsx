@@ -203,7 +203,7 @@ export function Editor({ content, onChange }: EditorProps) {
               onClick={button.onClick}
               disabled={button.disabled}
               type={button.active ? "primary" : "default"}
-              className="w-8 h-8 flex items-center justify-center"
+              className="w-8 h-8 flex items-center justify-center transition-opacity hover:opacity-80"
             />
           </Tooltip>
         ))}

@@ -21,6 +21,23 @@ function AntConfigProvider({ children }: ProvidersProps) {
           colorPrimary: '#3b82f6',
           borderRadius: 6,
         },
+        components: {
+          Button: {
+            // Disable the wave animation
+            animation: false,
+            // Use box-shadow for hover effect instead
+            styleValue: {
+              boxShadow: 'none',
+              '&:hover': {
+                opacity: 0.85,
+              },
+            },
+          },
+          Wave: {
+            // Disable wave effect globally
+            disabled: true,
+          },
+        },
       }}
     >
       {children}

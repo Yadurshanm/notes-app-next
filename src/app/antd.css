@@ -5,6 +5,7 @@
   --primary-active: #0369A1;
 }
 
+/* Input styles */
 .dark .ant-input,
 .dark .ant-input-affix-wrapper {
   background-color: #1f2937 !important;
@@ -24,6 +25,15 @@
   border-color: var(--primary-color) !important;
 }
 
+/* Button styles */
+.ant-btn {
+  transition: all 0.2s ease-in-out !important;
+}
+
+.ant-btn:active {
+  transform: scale(0.96);
+}
+
 .dark .ant-btn:not(.ant-btn-primary) {
   background-color: #1f2937 !important;
   border-color: #374151 !important;
@@ -33,20 +43,23 @@
 .dark .ant-btn:not(.ant-btn-primary):hover {
   border-color: #4b5563 !important;
   color: #f3f4f6 !important;
+  opacity: 0.85;
 }
 
-.dark .ant-btn-primary {
+.ant-btn-primary {
   background-color: var(--primary-color) !important;
 }
 
-.dark .ant-btn-primary:hover {
+.ant-btn-primary:hover {
   background-color: var(--primary-hover) !important;
+  opacity: 0.95;
 }
 
-.dark .ant-btn-primary:active {
+.ant-btn-primary:active {
   background-color: var(--primary-active) !important;
 }
 
+/* Popover styles */
 .dark .ant-popover-inner {
   background-color: #1f2937 !important;
 }
@@ -64,10 +77,12 @@
   background-color: #1f2937 !important;
 }
 
+/* List styles */
 .dark .ant-list-empty-text {
   color: #9ca3af !important;
 }
 
+/* Tooltip styles */
 .dark .ant-tooltip-inner {
   background-color: #1f2937 !important;
 }
@@ -90,17 +105,4 @@
 .ant-input-dark:focus,
 .ant-input-dark.ant-input-focused {
   border-color: var(--primary-color) !important;
-}
-
-/* Ant Design overrides */
-.ant-btn-primary {
-  background-color: var(--primary-color);
-}
-
-.ant-btn-primary:hover {
-  background-color: var(--primary-hover) !important;
-}
-
-.ant-btn-primary:active {
-  background-color: var(--primary-active) !important;
 }
