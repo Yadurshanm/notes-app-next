@@ -3,9 +3,18 @@ create table notes (
   id uuid default gen_random_uuid() primary key,
   title text not null default 'Untitled',
   content text not null default '',
+  tags text[],
+  is_starred boolean default false,
+  "order" integer,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+-- Add indexes
+create index notes_title_content_idx on notes using gin(to_tsvector('english', title || ' ' || content));
+create index notes_tags_idx on notes using gin(tags);
+create index notes_order_idx on notes("order");
+create index notes_is_starred_idx on notes(is_starred);
 
 -- Enable Row Level Security
 alter table notes enable row level security;
