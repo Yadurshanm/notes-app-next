@@ -2,7 +2,7 @@ import { Note } from '@/types'
 import { useTheme } from '@/contexts/ThemeContext'
 import { Card, CardBody, Button, Popover } from '@nextui-org/react'
 import { Trash2, FileText } from 'lucide-react'
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 
 interface NotesListProps {
   notes: Note[]
@@ -14,10 +14,6 @@ interface NotesListProps {
 export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }: NotesListProps) {
   const { isDarkMode } = useTheme()
   const [isPopoverOpen, setIsPopoverOpen] = useState<string | null>(null)
-
-  const handlePopoverOpenChange = useCallback((open: boolean, noteId: string) => {
-    setIsPopoverOpen(open ? noteId : null)
-  }, [])
 
   if (notes.length === 0) {
     return (
@@ -57,52 +53,50 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
                   {(note.content || '').replace(/<[^>]*>/g, '').slice(0, 100)}
                 </p>
               </div>
-              <Popover 
-                placement="left"
-                isOpen={isPopoverOpen === note.id}
-                onOpenChange={(open) => setIsPopoverOpen(open ? note.id : null)}
-              >
-                <div onClick={(e) => e.stopPropagation()}>
-                  <Button
-                    isIconOnly
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    className={isDarkMode ? 'hover:bg-red-900/20' : 'hover:bg-red-100'}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-                <Popover.Content>
-                  <div className="px-4 py-3">
-                    <div className="text-small font-bold">Delete note</div>
-                    <div className="text-tiny">Are you sure you want to delete this note?</div>
-                    <div className="flex gap-2 mt-4 justify-end">
-                      <Button 
-                        size="sm" 
-                        variant="light"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsPopoverOpen(null);
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        size="sm"
-                        color="danger"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDeleteNote(note.id);
-                          setIsPopoverOpen(null);
-                        }}
-                      >
-                        Delete
-                      </Button>
+              <div onClick={(e) => e.stopPropagation()}>
+                <Popover 
+                  placement="left"
+                  isOpen={isPopoverOpen === note.id}
+                  onOpenChange={(open) => setIsPopoverOpen(open ? note.id : null)}
+                >
+                  <Popover.Trigger>
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      variant="light"
+                      color="danger"
+                      className={isDarkMode ? 'hover:bg-red-900/20' : 'hover:bg-red-100'}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </Popover.Trigger>
+                  <Popover.Content>
+                    <div className="px-4 py-3">
+                      <div className="text-small font-bold">Delete note</div>
+                      <div className="text-tiny">Are you sure you want to delete this note?</div>
+                      <div className="flex gap-2 mt-4 justify-end">
+                        <Button 
+                          size="sm" 
+                          variant="light"
+                          onPress={() => setIsPopoverOpen(null)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          size="sm"
+                          color="danger"
+                          onPress={() => {
+                            onDeleteNote(note.id);
+                            setIsPopoverOpen(null);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                </Popover.Content>
-              </Popover>
+                  </Popover.Content>
+                </Popover>
+              </div>
             </div>
           </CardBody>
         </Card>
