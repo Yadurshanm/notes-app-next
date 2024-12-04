@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
 import { Version } from '@/components/Version'
@@ -23,13 +23,15 @@ export default function Home() {
   const [noteContent, setNoteContent] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
   const { isDarkMode } = useTheme()
   const saveTimeoutRef = useRef<NodeJS.Timeout>()
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const createTimeoutRef = useRef<NodeJS.Timeout>()
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    fetchNotes()
+    fetchData()
     return () => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
       if (createTimeoutRef.current) clearTimeout(createTimeoutRef.current)
@@ -267,7 +269,7 @@ export default function Home() {
             ) : (
               <div className="text-center">
                 <p className="text-red-500 mb-4">{error}</p>
-                <Button onClick={fetchNotes}>
+                <Button onClick={fetchData}>
                   Retry
                 </Button>
               </div>
