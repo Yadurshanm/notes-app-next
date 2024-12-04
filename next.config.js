@@ -6,6 +6,9 @@ const nextConfig = {
     config.externals = [...config.externals, { canvas: "canvas" }];
     return config;
   },
+  experimental: {
+    optimizePackageImports: ['@ant-design/icons'],
+  },
 }
 
 module.exports = nextConfig

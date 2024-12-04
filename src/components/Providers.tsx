@@ -3,7 +3,7 @@
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { ReactNode } from 'react'
 import { Toaster } from 'sonner'
-import { App, ConfigProvider, theme } from 'antd'
+import { ConfigProvider, theme } from 'antd'
 
 interface ProvidersProps {
   children: ReactNode
@@ -14,24 +14,23 @@ export function Providers({ children }: ProvidersProps) {
     <ThemeProvider>
       <ConfigProvider
         theme={{
-          algorithm: theme.defaultAlgorithm,
           token: {
             colorPrimary: '#3b82f6',
             borderRadius: 6,
+            motion: false,
           },
           components: {
             Button: {
-              algorithm: true,
+              motion: false,
+              className: 'custom-btn',
             },
           },
         }}
       >
-        <App>
-          <div className="min-h-screen">
-            {children}
-            <Toaster richColors />
-          </div>
-        </App>
+        <div className="min-h-screen">
+          {children}
+          <Toaster richColors />
+        </div>
       </ConfigProvider>
     </ThemeProvider>
   )

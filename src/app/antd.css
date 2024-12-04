@@ -1,8 +1,46 @@
 /* Dark mode styles for Ant Design components */
 :root {
-  --primary-color: #0EA5E9;
-  --primary-hover: #0284C7;
-  --primary-active: #0369A1;
+  --primary-color: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-active: #1d4ed8;
+}
+
+/* Button styles */
+.ant-btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transform: scale(1);
+}
+
+.ant-btn:active {
+  transform: scale(0.96);
+}
+
+.ant-btn:hover {
+  opacity: 0.9;
+}
+
+.ant-btn-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.ant-btn-primary:hover {
+  background-color: var(--primary-hover) !important;
+}
+
+.ant-btn-primary:active {
+  background-color: var(--primary-active) !important;
+}
+
+/* Dark mode styles */
+.dark .ant-btn:not(.ant-btn-primary) {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #e5e7eb !important;
+}
+
+.dark .ant-btn:not(.ant-btn-primary):hover {
+  border-color: #4b5563 !important;
+  color: #f3f4f6 !important;
 }
 
 /* Input styles */
@@ -11,6 +49,7 @@
   background-color: #1f2937 !important;
   border-color: #374151 !important;
   color: #e5e7eb !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .dark .ant-input:hover,
@@ -23,40 +62,6 @@
 .dark .ant-input-focused,
 .dark .ant-input-affix-wrapper-focused {
   border-color: var(--primary-color) !important;
-}
-
-/* Button styles */
-.ant-btn {
-  transition: all 0.2s ease-in-out !important;
-}
-
-.ant-btn:active {
-  transform: scale(0.96);
-}
-
-.dark .ant-btn:not(.ant-btn-primary) {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-  color: #e5e7eb !important;
-}
-
-.dark .ant-btn:not(.ant-btn-primary):hover {
-  border-color: #4b5563 !important;
-  color: #f3f4f6 !important;
-  opacity: 0.85;
-}
-
-.ant-btn-primary {
-  background-color: var(--primary-color) !important;
-}
-
-.ant-btn-primary:hover {
-  background-color: var(--primary-hover) !important;
-  opacity: 0.95;
-}
-
-.ant-btn-primary:active {
-  background-color: var(--primary-active) !important;
 }
 
 /* Popover styles */
@@ -105,4 +110,28 @@
 .ant-input-dark:focus,
 .ant-input-dark.ant-input-focused {
   border-color: var(--primary-color) !important;
+}
+
+/* Remove Ant Design wave effect */
+.ant-wave {
+  display: none !important;
+}
+
+/* Custom button animations */
+.custom-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.custom-btn:active::after {
+  opacity: 0.1;
 }
