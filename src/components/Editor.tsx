@@ -17,7 +17,7 @@ import {
   UnderlineOutlined,
   UnorderedListOutlined,
   OrderedListOutlined,
-  Strikeoutlined,
+  StrikeOutlined,
   AlignLeftOutlined,
   AlignCenterOutlined,
   AlignRightOutlined,
@@ -157,7 +157,7 @@ export function Editor({ content, onChange }: EditorProps) {
     },
     {
       tooltip: 'Strike (⌘⇧X)',
-      icon: <Strikeoutlined />,
+      icon: <StrikeOutlined />,
       onClick: () => editor?.chain().focus().toggleStrike().run(),
       active: editor?.isActive('strike'),
     },
