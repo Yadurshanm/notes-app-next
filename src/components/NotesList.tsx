@@ -37,17 +37,15 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
                 </p>
               </div>
               <Popover placement="left">
-                <Popover.Trigger>
-                  <Button
-                    isIconOnly
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    onPress={(e) => e.stopPropagation()}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </Popover.Trigger>
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="light"
+                  color="danger"
+                  onPress={(e) => e.stopPropagation()}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
                 <Popover.Content>
                   <div className="px-1 py-2">
                     <div className="text-small font-bold">Delete note</div>
