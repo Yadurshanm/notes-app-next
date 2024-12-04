@@ -1,18 +1,18 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { Button, Input, Tooltip } from 'antd'
-import type { InputRef } from 'antd/es/input'
+import { Button } from '@/components/Button'
+import { Input } from '@/components/Input'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
 import { Version } from '@/components/Version'
 import { toast } from 'sonner'
 import {
-  PlusOutlined,
-  SearchOutlined,
-  SunOutlined,
-  MoonOutlined,
-} from '@ant-design/icons'
+  Plus,
+  Search,
+  Sun,
+  Moon,
+} from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { supabase } from '@/lib/supabase'
@@ -30,9 +30,9 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const { isDarkMode, toggleTheme } = useTheme()
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout>()
   const createTimeoutRef = useRef<NodeJS.Timeout>()
-  const [searchInput, setSearchInput] = useState<InputRef | null>(null)
 
   useEffect(() => {
     fetchNotes()
@@ -183,7 +183,8 @@ export default function Home() {
     }, 1000)
   }
 
-  const handleTitleChange = (newTitle: string) => {
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = e.target.value
     setTitle(newTitle)
     
     if (!selectedNote && (newTitle || noteContent)) {
@@ -236,7 +237,7 @@ export default function Home() {
   useKeyboardShortcuts({
     onNewNote: createNote,
     onSave: updateNote,
-    onSearch: () => searchInput?.focus(),
+    onSearch: () => searchInputRef.current?.focus(),
   })
 
   if (loading || error) {
@@ -247,7 +248,7 @@ export default function Home() {
         ) : (
           <div className="text-center">
             <p className="text-red-500 mb-4">{error}</p>
-            <Button type="primary" onClick={fetchNotes}>
+            <Button onClick={fetchNotes}>
               Retry
             </Button>
           </div>
@@ -261,30 +262,27 @@ export default function Home() {
       <div className="px-4 pt-4 pb-2 space-y-3 flex-none">
         <div className="flex items-center justify-between gap-2">
           <Button
-            type="primary"
-            icon={<PlusOutlined />}
+            variant="primary"
             onClick={createNote}
             className="flex-1"
           >
+            <Plus className="h-4 w-4 mr-2" />
             New Note
             <span className="ml-1 text-xs opacity-70">(⌘N)</span>
           </Button>
-          <Tooltip title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
-            <Button
-              icon={isDarkMode ? <SunOutlined /> : <MoonOutlined />}
-              onClick={toggleTheme}
-            />
-          </Tooltip>
+          <Button
+            onClick={toggleTheme}
+            title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+          >
+            {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
         </div>
         <Input
-          ref={(input) => setSearchInput(input)}
+          ref={searchInputRef}
           placeholder="Search notes... (⌘K)"
-          prefix={<SearchOutlined className="text-gray-400" />}
+          prefix={<Search className="h-4 w-4" />}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          allowClear
-          className={isDarkMode ? 'ant-input-dark' : ''}
-          onFocus={(e) => e.target.select()}
         />
       </div>
       <div className="flex-1 overflow-hidden">
@@ -308,10 +306,9 @@ export default function Home() {
         <Input
           placeholder="Note title"
           value={title}
-          onChange={(e) => handleTitleChange(e.target.value)}
-          size="large"
-          className={isDarkMode ? 'ant-input-dark' : ''}
-          bordered={false}
+          onChange={handleTitleChange}
+          size="lg"
+          variant="borderless"
         />
       </div>
       <div className="flex-1 p-4 overflow-auto">
