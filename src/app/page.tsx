@@ -1,33 +1,29 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
-import { Button } from '@/components/Button'
-import { Input } from '@/components/Input'
+import { useState, useEffect, useRef } from 'react'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
-import { AIConnectionStatus } from '@/components/AIConnectionStatus'
 import { Version } from '@/components/Version'
 import { toast } from 'sonner'
-import { Plus, Search } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { supabase } from '@/lib/supabase'
-import { Note } from '@/types'
-import { NotesList } from '@/components/NotesList'
+import { Note, Category } from '@/types'
 import { Editor } from '@/components/Editor'
 import { AppLayout } from '@/components/AppLayout'
 import { useSearchParams } from 'next/navigation'
+import { Sidebar } from '@/components/Sidebar'
 
 export default function Home() {
   const [notes, setNotes] = useState<Note[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [selectedNote, setSelectedNote] = useState<Note | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [title, setTitle] = useState('')
   const [noteContent, setNoteContent] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
   const { isDarkMode } = useTheme()
-  const searchInputRef = useRef<HTMLInputElement>(null)
   const saveTimeoutRef = useRef<NodeJS.Timeout>()
   const createTimeoutRef = useRef<NodeJS.Timeout>()
   const searchParams = useSearchParams()
@@ -50,18 +46,27 @@ export default function Home() {
     }
   }, [notes, searchParams])
 
-  const fetchNotes = async () => {
+  const fetchData = async () => {
     try {
       setError(null)
-      const { data, error } = await supabase
-        .from('notes')
-        .select('*')
-        .order('updated_at', { ascending: false })
+      const [notesResponse, categoriesResponse] = await Promise.all([
+        supabase
+          .from('notes')
+          .select('*')
+          .order('order', { ascending: true }),
+        supabase
+          .from('categories')
+          .select('*')
+          .order('order', { ascending: true })
+      ])
 
-      if (error) throw error
-      setNotes(data || [])
+      if (notesResponse.error) throw notesResponse.error
+      if (categoriesResponse.error) throw categoriesResponse.error
+
+      setNotes(notesResponse.data || [])
+      setCategories(categoriesResponse.data || [])
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error fetching notes'
+      const errorMessage = error instanceof Error ? error.message : 'Error fetching data'
       setError(errorMessage)
       toast.error(errorMessage)
     } finally {
@@ -75,7 +80,11 @@ export default function Home() {
         title: 'Untitled',
         content: '',
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
+        category_id: selectedCategory,
+        tags: [],
+        is_starred: false,
+        order: notes.length
       }
 
       const { data, error } = await supabase
@@ -270,43 +279,17 @@ export default function Home() {
   }
 
   const sidebar = (
-    <div className="flex flex-col h-full">
-      <div className="px-4 pt-4 pb-2 space-y-3 flex-none">
-        <div className="flex items-center justify-between gap-2">
-          <Button
-            variant="primary"
-            onClick={createNote}
-            className="flex-1"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            New Note
-            <span className="ml-1 text-xs opacity-70">(⌘N)</span>
-          </Button>
-        </div>
-        <Input
-          ref={searchInputRef}
-          placeholder="Search notes... (⌘K)"
-          prefix={<Search className="h-4 w-4" />}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
-      <div className="flex-1 overflow-hidden">
-        <NotesList
-          notes={filteredNotes}
-          selectedNoteId={selectedNote?.id || null}
-          onSelectNote={handleNoteSelect}
-          onDeleteNote={deleteNote}
-        />
-      </div>
-      <div className={`p-2 border-t flex items-center justify-between text-xs ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}`}>
-        <div className="flex items-center gap-4">
-          <ConnectionStatus />
-          <AIConnectionStatus />
-          <Version />
-        </div>
-      </div>
-    </div>
+    <Sidebar
+      notes={notes}
+      categories={categories}
+      selectedNoteId={selectedNote?.id || null}
+      selectedCategoryId={selectedCategory}
+      onSelectNote={handleNoteSelect}
+      onSelectCategory={setSelectedCategory}
+      onCreateNote={createNote}
+      onUpdateNote={updateNote}
+      onUpdateCategories={setCategories}
+    />
   )
 
   const content = (
