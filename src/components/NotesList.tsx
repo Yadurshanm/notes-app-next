@@ -3,6 +3,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { Card, CardBody, Button, Popover } from '@nextui-org/react'
 import { Trash2, FileText } from 'lucide-react'
 import { useState } from 'react'
+import { PressEvent } from '@react-types/shared'
 
 interface NotesListProps {
   notes: Note[]
@@ -73,7 +74,7 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
                     </span>
                   </Popover.Trigger>
                   <Popover.Content>
-                    {(onClose) => (
+                    {(onClose: ((e: PressEvent) => void) | undefined) => (
                       <div className="px-4 py-3">
                         <div className="text-small font-bold">Delete note</div>
                         <div className="text-tiny">Are you sure you want to delete this note?</div>
