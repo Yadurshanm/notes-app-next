@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Tooltip } from '@nextui-org/react'
+import { Tooltip } from 'antd'
 import { supabase } from '@/lib/supabase'
 import { SupabaseIcon } from './SupabaseIcon'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -9,6 +9,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 export function ConnectionStatus() {
   const [status, setStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
   const [error, setError] = useState<string | null>(null)
+  const { isDarkMode } = useTheme()
 
   useEffect(() => {
     async function checkConnection() {
@@ -44,14 +45,8 @@ export function ConnectionStatus() {
     error: 'Connection Error'
   }
 
-  const { isDarkMode } = useTheme()
-
   return (
-    <Tooltip 
-      content={error || statusText[status]} 
-      delay={500} 
-      closeDelay={0}
-    >
+    <Tooltip title={error || statusText[status]} mouseEnterDelay={0.5}>
       <div className="flex items-center gap-1.5 cursor-help">
         <SupabaseIcon className={`
           w-3.5 h-3.5 transition-colors duration-200
@@ -66,4 +61,3 @@ export function ConnectionStatus() {
     </Tooltip>
   )
 }
-

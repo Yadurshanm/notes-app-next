@@ -1,17 +1,17 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { Button, Input, Tooltip } from '@nextui-org/react'
+import { Button, Input, Tooltip } from 'antd'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
 import { Version } from '@/components/Version'
 import { toast } from 'sonner'
 import {
-  Plus,
-  Search,
-  Sun,
-  Moon,
-} from 'lucide-react'
+  PlusOutlined,
+  SearchOutlined,
+  SunOutlined,
+  MoonOutlined,
+} from '@ant-design/icons'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { supabase } from '@/lib/supabase'
@@ -128,7 +128,6 @@ export default function Home() {
   }
 
   const handleNoteSelect = (note: Note) => {
-    // Use a single state update to prevent race conditions
     requestAnimationFrame(() => {
       setSelectedNote(note)
       setTitle(note.title)
@@ -143,7 +142,6 @@ export default function Home() {
       clearTimeout(saveTimeoutRef.current)
     }
 
-    // Only save if there are actual changes
     if (noteTitle !== selectedNote.title || noteContent !== selectedNote.content) {
       saveTimeoutRef.current = setTimeout(() => {
         updateNote(noteTitle, noteContent)
@@ -248,7 +246,7 @@ export default function Home() {
         ) : (
           <div className="text-center">
             <p className="text-red-500 mb-4">{error}</p>
-            <Button color="primary" onClick={fetchNotes}>
+            <Button type="primary" onClick={fetchNotes}>
               Retry
             </Button>
           </div>
@@ -262,35 +260,29 @@ export default function Home() {
       <div className="px-4 pt-4 pb-2 space-y-3 flex-none">
         <div className="flex items-center justify-between gap-2">
           <Button
-            color="primary"
-            startContent={<Plus className="h-4 w-4" />}
+            type="primary"
+            icon={<PlusOutlined />}
             onClick={createNote}
             className="flex-1"
           >
             New Note
             <span className="ml-1 text-xs opacity-70">(⌘N)</span>
           </Button>
-          <Tooltip content={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
+          <Tooltip title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
             <Button
-              isIconOnly
-              variant="flat"
+              icon={isDarkMode ? <SunOutlined /> : <MoonOutlined />}
               onClick={toggleTheme}
-            >
-              {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
+            />
           </Tooltip>
         </div>
         <Input
           ref={searchInputRef}
           placeholder="Search notes... (⌘K)"
-          startContent={<Search className="h-4 w-4 text-gray-400" />}
+          prefix={<SearchOutlined className="text-gray-400" />}
           value={searchQuery}
-          onValueChange={setSearchQuery}
-          isClearable
-          classNames={{
-            input: isDarkMode ? 'bg-gray-800 text-white' : '',
-            inputWrapper: isDarkMode ? 'bg-gray-800' : ''
-          }}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          allowClear
+          className={isDarkMode ? 'ant-input-dark' : ''}
         />
       </div>
       <div className="flex-1 overflow-hidden">
@@ -314,12 +306,9 @@ export default function Home() {
         <Input
           placeholder="Note title"
           value={title}
-          onValueChange={handleTitleChange}
-          size="lg"
-          classNames={{
-            input: isDarkMode ? 'bg-gray-800 text-white' : '',
-            inputWrapper: isDarkMode ? 'bg-gray-800' : ''
-          }}
+          onChange={(e) => handleTitleChange(e.target.value)}
+          size="large"
+          className={isDarkMode ? 'ant-input-dark' : ''}
         />
       </div>
       <div className="flex-1 p-4 overflow-auto">
