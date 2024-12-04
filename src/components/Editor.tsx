@@ -1,3 +1,5 @@
+'use client'
+
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
@@ -38,9 +40,7 @@ export function Editor({ content, onChange }: EditorProps) {
     setIsMounted(true)
   }, [])
 
-  const editor = useEditor(
-    !isMounted ? undefined : {
-      immediatelyRender: false,
+  const editor = useEditor({
     extensions: [
       StarterKit.configure({
         bulletList: {
@@ -87,17 +87,17 @@ export function Editor({ content, onChange }: EditorProps) {
         class: 'prose max-w-none w-full focus:outline-none',
       },
     },
-    content: isMounted ? content : '',
+    content: content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
     },
   })
 
   useEffect(() => {
-    if (editor && isMounted && content !== editor.getHTML()) {
+    if (editor && content !== editor.getHTML()) {
       editor.commands.setContent(content)
     }
-  }, [content, editor, isMounted])
+  }, [content, editor])
 
   if (!isMounted || !editor) {
     return (
