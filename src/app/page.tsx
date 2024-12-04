@@ -78,17 +78,18 @@ export default function Home() {
     }
   }
 
-  const createNote = async () => {
+  const createNote = async (categoryId?: string | null) => {
+    const targetCategoryId = categoryId ?? selectedCategory
     try {
       const newNote = {
         title: 'Untitled',
         content: '',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        category_id: selectedCategory,
+        category_id: targetCategoryId,
         tags: [],
         is_starred: false,
-        order: notes.filter(n => n.category_id === selectedCategory).length
+        order: notes.filter(n => n.category_id === targetCategoryId).length
       }
 
       const { data, error } = await supabase

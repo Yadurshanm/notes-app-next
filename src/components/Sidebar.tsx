@@ -75,8 +75,8 @@ export function Sidebar({
           selectedCategoryId={selectedCategoryId}
           onSelectCategory={onSelectCategory}
           onUpdateCategories={onUpdateCategories}
-          onCreateNote={(categoryId) => {
-            onCreateNote()
+          onCreateNote={async (categoryId) => {
+            await onCreateNote(categoryId)
             if (categoryId) {
               onSelectCategory(categoryId)
             }

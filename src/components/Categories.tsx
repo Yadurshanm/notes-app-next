@@ -20,6 +20,7 @@ export function Categories({
   selectedCategoryId,
   onSelectCategory,
   onUpdateCategories,
+  onCreateNote,
 }: CategoriesProps) {
   const { isDarkMode } = useTheme()
   const [newCategoryName, setNewCategoryName] = useState('')
