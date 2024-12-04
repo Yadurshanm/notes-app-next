@@ -58,15 +58,17 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
                 isOpen={isPopoverOpen === note.id}
                 onOpenChange={(open) => setIsPopoverOpen(open ? note.id : null)}
               >
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="light"
-                  color="danger"
-                  onPress={(e) => e.stopPropagation()}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <Popover.Trigger>
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                    color="danger"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </Popover.Trigger>
                 <Popover.Content className={isDarkMode ? 'dark' : ''}>
                   <div className="px-1 py-2">
                     <div className="text-small font-bold">Delete note</div>
@@ -76,7 +78,7 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
                         size="sm" 
                         variant="flat" 
                         color="default"
-                        onPress={(e) => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           setIsPopoverOpen(null);
                         }}
@@ -86,7 +88,7 @@ export function NotesList({ notes, selectedNoteId, onSelectNote, onDeleteNote }:
                       <Button
                         size="sm"
                         color="danger"
-                        onPress={(e) => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           onDeleteNote(note.id);
                           setIsPopoverOpen(null);
