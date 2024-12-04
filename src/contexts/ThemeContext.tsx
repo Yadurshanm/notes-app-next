@@ -1,7 +1,6 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { ConfigProvider, theme } from 'antd'
 
 interface ThemeContextType {
   isDarkMode: boolean
@@ -23,43 +22,39 @@ interface ThemeProviderProps {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const savedTheme = localStorage.getItem('theme')
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const initialDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark)
     setIsDarkMode(initialDarkMode)
-    if (initialDarkMode) {
-      document.documentElement.classList.add('dark')
-    }
   }, [])
 
   useEffect(() => {
-    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light')
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
+    if (mounted) {
+      localStorage.setItem('theme', isDarkMode ? 'dark' : 'light')
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
     }
-  }, [isDarkMode])
+  }, [isDarkMode, mounted])
 
   const toggleTheme = () => {
     setIsDarkMode(prev => !prev)
   }
 
+  // Prevent flash of wrong theme
+  if (!mounted) {
+    return null
+  }
+
   return (
     <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-      <ConfigProvider
-        theme={{
-          algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
-          token: {
-            colorPrimary: '#3b82f6',
-            borderRadius: 6,
-          },
-        }}
-      >
-        {children}
-      </ConfigProvider>
+      {children}
     </ThemeContext.Provider>
   )
 }

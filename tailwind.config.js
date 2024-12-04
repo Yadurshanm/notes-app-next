@@ -5,6 +5,7 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       typography: {
@@ -16,21 +17,23 @@ module.exports = {
       },
       colors: {
         primary: {
-          50: '#F0F9FF',
-          100: '#E0F2FE',
-          200: '#BAE6FD',
-          300: '#7DD3FC',
-          400: '#38BDF8',
-          500: '#0EA5E9',
-          600: '#0284C7',
-          700: '#0369A1',
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
           800: '#075985',
-          900: '#0C4A6E',
+          900: '#0c4a6e',
         },
+      },
+      gridTemplateColumns: {
+        '52': 'repeat(52, minmax(0, 1fr))',
       },
     },
   },
-  darkMode: 'class',
   plugins: [
     require('@tailwindcss/typography'),
   ],
