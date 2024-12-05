@@ -98,10 +98,8 @@ export function Sidebar({
         p-2 border-t flex items-center justify-between text-xs
         ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}
       `}>
-        <div className="flex items-center gap-4">
-          <ConnectionStatus />
-          <Version />
-        </div>
+        <ConnectionStatus />
+        <Version />
       </div>
     </div>
   )
