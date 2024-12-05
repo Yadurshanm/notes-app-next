@@ -326,7 +326,7 @@ export default function Home() {
         <Editor 
           content={noteContent} 
           onChange={handleContentChange}
-          noteId={selectedNote?.id}
+
           categories={categories}
           selectedCategoryId={selectedCategory}
           onSelectCategory={setSelectedCategory}

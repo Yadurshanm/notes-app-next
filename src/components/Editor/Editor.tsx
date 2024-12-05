@@ -59,37 +59,23 @@ import { CodeBlock } from './extensions/CodeBlock'
 interface EditorProps {
   content: string
   onChange: (content: string) => void
-  noteId?: string
-  categories: Category[]
-  selectedCategoryId: string | null
-  onSelectCategory: (categoryId: string | null) => void
+  categories?: Category[]
+  selectedCategoryId?: string | null
+  onSelectCategory?: (categoryId: string | null) => void
 }
 
 function EditorComponent({
   content,
   onChange,
-  noteId,
-  categories,
-  selectedCategoryId,
-  onSelectCategory,
+  categories = [],
+  selectedCategoryId = null,
+  onSelectCategory = () => {},
 }: EditorProps) {
   const { isDarkMode } = useTheme()
   const [isMounted, setIsMounted] = useState(false)
-  const [currentNoteId, setCurrentNoteId] = useState(noteId)
-
   useEffect(() => {
     setIsMounted(true)
   }, [])
-
-  // Reset editor content when noteId changes
-  useEffect(() => {
-    if (noteId !== currentNoteId) {
-      setCurrentNoteId(noteId)
-      if (editor) {
-        editor.commands.setContent(content)
-      }
-    }
-  }, [noteId, content, currentNoteId])
 
   const editor = useEditor({
     extensions: [
@@ -166,10 +152,7 @@ function EditorComponent({
     },
     content,
     onUpdate: ({ editor }) => {
-      // Only trigger onChange if we're still editing the same note
-      if (noteId === currentNoteId) {
-        onChange(editor.getHTML())
-      }
+      onChange(editor.getHTML())
     },
   })
 
