@@ -12,6 +12,16 @@ import Superscript from '@tiptap/extension-superscript'
 import Subscript from '@tiptap/extension-subscript'
 import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
+import Typography from '@tiptap/extension-typography'
+import Placeholder from '@tiptap/extension-placeholder'
+import TextStyle from '@tiptap/extension-text-style'
+import Color from '@tiptap/extension-color'
+import FontFamily from '@tiptap/extension-font-family'
+import Table from '@tiptap/extension-table'
+import TableRow from '@tiptap/extension-table-row'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
+import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import { useEffect, useState } from 'react'
 import { Button } from '../Button'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -30,6 +40,17 @@ import {
   Undo,
   Code,
   Image as ImageIcon,
+  Table as TableIcon,
+  Minus,
+  Type,
+  Palette,
+  Heading1,
+  Heading2,
+  Heading3,
+  Quote,
+  Link as LinkIcon,
+  Superscript as SuperscriptIcon,
+  Subscript as SubscriptIcon,
 } from 'lucide-react'
 import { CategorySelector } from '../CategorySelector'
 import { Category } from '@/types'
@@ -114,6 +135,27 @@ function EditorComponent({
       Image.configure({
         HTMLAttributes: {
           class: 'max-w-full rounded-lg',
+        },
+      }),
+      Typography,
+      Placeholder.configure({
+        placeholder: 'Write something...',
+      }),
+      TextStyle,
+      Color,
+      FontFamily,
+      Table.configure({
+        resizable: true,
+        HTMLAttributes: {
+          class: 'border-collapse table-auto w-full',
+        },
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      HorizontalRule.configure({
+        HTMLAttributes: {
+          class: 'my-4 border-t border-gray-300 dark:border-gray-700',
         },
       }),
     ],
@@ -245,9 +287,66 @@ function EditorComponent({
       active: editor?.isActive({ textAlign: 'right' }),
     },
     {
+      tooltip: 'Heading 1',
+      icon: <Heading1 className="w-4 h-4" />,
+      onClick: () => editor?.chain().focus().toggleHeading({ level: 1 }).run(),
+      active: editor?.isActive('heading', { level: 1 }),
+    },
+    {
+      tooltip: 'Heading 2',
+      icon: <Heading2 className="w-4 h-4" />,
+      onClick: () => editor?.chain().focus().toggleHeading({ level: 2 }).run(),
+      active: editor?.isActive('heading', { level: 2 }),
+    },
+    {
+      tooltip: 'Heading 3',
+      icon: <Heading3 className="w-4 h-4" />,
+      onClick: () => editor?.chain().focus().toggleHeading({ level: 3 }).run(),
+      active: editor?.isActive('heading', { level: 3 }),
+    },
+    {
+      tooltip: 'Quote',
+      icon: <Quote className="w-4 h-4" />,
+      onClick: () => editor?.chain().focus().toggleBlockquote().run(),
+      active: editor?.isActive('blockquote'),
+    },
+    {
+      tooltip: 'Insert Link (⌘K)',
+      icon: <LinkIcon className="w-4 h-4" />,
+      onClick: () => {
+        const url = window.prompt('Enter URL:')
+        if (url) {
+          editor?.chain().focus().setLink({ href: url }).run()
+        }
+      },
+      active: editor?.isActive('link'),
+    },
+    {
       tooltip: 'Insert Image',
       icon: <ImageIcon className="w-4 h-4" />,
       onClick: handleImageUpload,
+    },
+    {
+      tooltip: 'Insert Table',
+      icon: <TableIcon className="w-4 h-4" />,
+      onClick: () => editor?.chain().focus().insertTable({ rows: 3, cols: 3 }).run(),
+    },
+    {
+      tooltip: 'Insert Horizontal Rule',
+      icon: <Minus className="w-4 h-4" />,
+      onClick: () => editor?.chain().focus().setHorizontalRule().run(),
+    },
+    {
+      tooltip: 'Superscript',
+      icon: <SuperscriptIcon className="w-4 h-4" />,
+      onClick: () => editor?.chain().focus().toggleSuperscript().run(),
+      active: editor?.isActive('superscript'),
+    },
+    {
+      tooltip: 'Subscript',
+      icon: <SubscriptIcon className="w-4 h-4" />,
+      onClick: () => editor?.chain().focus().toggleSubscript().run(),
+      active: editor?.isActive('subscript'),
     },
   ]
 
