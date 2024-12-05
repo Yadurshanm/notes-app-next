@@ -4,7 +4,7 @@ import { ButtonHTMLAttributes, ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode
+  children?: ReactNode
   variant?: 'default' | 'primary' | 'danger'
   size?: 'sm' | 'md' | 'lg'
   isIconOnly?: boolean

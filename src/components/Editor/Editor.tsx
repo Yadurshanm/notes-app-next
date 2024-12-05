@@ -191,8 +191,11 @@ function EditorComponent({
 
   const handleImageUpload = () => {
     const url = window.prompt('Enter image URL:')
-    if (url) {
-      editor?.chain().focus().setImage({ src: url }).run()
+    if (url && editor) {
+      editor.chain().focus().insertContent({
+        type: 'image',
+        attrs: { src: url }
+      }).run()
     }
   }
 

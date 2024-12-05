@@ -324,9 +324,8 @@ export default function Home() {
       </div>
       <div className="flex-1 p-4 overflow-auto">
         <Editor 
-          content={noteContent} 
+          content={noteContent || ''} 
           onChange={handleContentChange}
-
           categories={categories}
           selectedCategoryId={selectedCategory}
           onSelectCategory={setSelectedCategory}
