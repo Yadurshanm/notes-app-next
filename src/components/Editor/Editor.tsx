@@ -23,9 +23,9 @@ import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import { useEffect, useState } from 'react'
-import { Button } from '../Button'
+import { Button } from '@/components/Button'
 import { useTheme } from '@/contexts/ThemeContext'
-import { AIAssistant } from '../AI/AIAssistant'
+
 import {
   Bold,
   Italic,

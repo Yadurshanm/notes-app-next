@@ -326,6 +326,10 @@ export default function Home() {
         <Editor 
           content={noteContent} 
           onChange={handleContentChange}
+          noteId={selectedNote?.id}
+          categories={categories}
+          selectedCategoryId={selectedCategory}
+          onSelectCategory={setSelectedCategory}
         />
         <div className={`mt-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
           Press ⌘S to save • Last saved: {new Date().toLocaleTimeString()}
