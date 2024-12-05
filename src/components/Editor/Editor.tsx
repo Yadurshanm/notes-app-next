@@ -215,103 +215,120 @@ function EditorComponent({
 
   const editorButtons = [
     {
-      tooltip: 'Undo (⌘Z)',
+      tooltip: 'Undo',
+      group: 'history',
       icon: <Undo className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().undo().run(),
       disabled: !editor?.can().undo(),
     },
     {
-      tooltip: 'Redo (⌘⇧Z)',
+      tooltip: 'Redo',
+      group: 'history',
       icon: <Redo className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().redo().run(),
       disabled: !editor?.can().redo(),
     },
     {
-      tooltip: 'Bold (⌘B)',
+      tooltip: 'Bold',
+      group: 'basic',
       icon: <Bold className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleBold().run(),
       active: editor?.isActive('bold'),
     },
     {
-      tooltip: 'Italic (⌘I)',
+      tooltip: 'Italic',
+      group: 'basic',
       icon: <Italic className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleItalic().run(),
       active: editor?.isActive('italic'),
     },
     {
-      tooltip: 'Underline (⌘U)',
+      tooltip: 'Underline',
+      group: 'basic',
       icon: <UnderlineIcon className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleUnderline().run(),
       active: editor?.isActive('underline'),
     },
     {
       tooltip: 'Strike',
+      group: 'basic',
       icon: <Strikethrough className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleStrike().run(),
       active: editor?.isActive('strike'),
     },
     {
       tooltip: 'Code Block',
+      group: 'insert',
       icon: <Code className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleNode('codeBlock', 'paragraph').run(),
       active: editor?.isActive('codeBlock'),
     },
     {
       tooltip: 'Bullet List',
+      group: 'list',
       icon: <List className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleBulletList().run(),
       active: editor?.isActive('bulletList'),
     },
     {
       tooltip: 'Ordered List',
+      group: 'list',
       icon: <ListOrdered className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleOrderedList().run(),
       active: editor?.isActive('orderedList'),
     },
     {
-      tooltip: 'Align Left (⌘⇧L)',
+      tooltip: 'Align Left',
+      group: 'align',
       icon: <AlignLeft className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().setTextAlign('left').run(),
       active: editor?.isActive({ textAlign: 'left' }),
     },
     {
-      tooltip: 'Align Center (⌘⇧E)',
+      tooltip: 'Align Center',
+      group: 'align',
       icon: <AlignCenter className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().setTextAlign('center').run(),
       active: editor?.isActive({ textAlign: 'center' }),
     },
     {
-      tooltip: 'Align Right (⌘⇧R)',
+      tooltip: 'Align Right',
+      group: 'align',
       icon: <AlignRight className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().setTextAlign('right').run(),
       active: editor?.isActive({ textAlign: 'right' }),
     },
     {
       tooltip: 'Heading 1',
+      group: 'heading',
       icon: <Heading1 className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleHeading({ level: 1 }).run(),
       active: editor?.isActive('heading', { level: 1 }),
     },
     {
       tooltip: 'Heading 2',
+      group: 'heading',
       icon: <Heading2 className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleHeading({ level: 2 }).run(),
       active: editor?.isActive('heading', { level: 2 }),
     },
     {
       tooltip: 'Heading 3',
+      group: 'heading',
       icon: <Heading3 className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleHeading({ level: 3 }).run(),
       active: editor?.isActive('heading', { level: 3 }),
     },
     {
       tooltip: 'Quote',
+      group: 'list',
       icon: <Quote className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleBlockquote().run(),
       active: editor?.isActive('blockquote'),
     },
     {
-      tooltip: 'Insert Link (⌘K)',
+      tooltip: 'Insert Link',
+      group: 'insert',
       icon: <LinkIcon className="w-4 h-4" />,
       onClick: () => {
         const url = window.prompt('Enter URL:')
@@ -323,27 +340,32 @@ function EditorComponent({
     },
     {
       tooltip: 'Insert Image',
+      group: 'insert',
       icon: <ImageIcon className="w-4 h-4" />,
       onClick: handleImageUpload,
     },
     {
       tooltip: 'Insert Table',
+      group: 'insert',
       icon: <TableIcon className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().insertTable({ rows: 3, cols: 3 }).run(),
     },
     {
       tooltip: 'Insert Horizontal Rule',
+      group: 'insert',
       icon: <Minus className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().setHorizontalRule().run(),
     },
     {
       tooltip: 'Superscript',
+      group: 'script',
       icon: <SuperscriptIcon className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleSuperscript().run(),
       active: editor?.isActive('superscript'),
     },
     {
       tooltip: 'Subscript',
+      group: 'script',
       icon: <SubscriptIcon className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleSubscript().run(),
       active: editor?.isActive('subscript'),
@@ -371,7 +393,7 @@ function EditorComponent({
           {/* History Group */}
           <div className="flex gap-1">
             {editorButtons
-              .filter(btn => ['Undo', 'Redo'].includes(btn.tooltip))
+              .filter(btn => btn.group === 'history')
               .map((button, index) => (
                 <div key={index} title={button.tooltip}>
                   <Button
@@ -391,7 +413,7 @@ function EditorComponent({
           {/* Basic Formatting Group */}
           <div className="flex gap-1">
             {editorButtons
-              .filter(btn => ['Bold', 'Italic', 'Underline', 'Strike'].includes(btn.tooltip))
+              .filter(btn => btn.group === 'basic')
               .map((button, index) => (
                 <div key={index} title={button.tooltip}>
                   <Button
@@ -411,7 +433,7 @@ function EditorComponent({
           {/* Headings Group */}
           <div className="flex gap-1">
             {editorButtons
-              .filter(btn => ['Heading 1', 'Heading 2', 'Heading 3'].includes(btn.tooltip))
+              .filter(btn => btn.group === 'heading')
               .map((button, index) => (
                 <div key={index} title={button.tooltip}>
                   <Button
@@ -431,7 +453,7 @@ function EditorComponent({
           {/* Lists and Quote Group */}
           <div className="flex gap-1">
             {editorButtons
-              .filter(btn => ['Bullet List', 'Ordered List', 'Quote'].includes(btn.tooltip))
+              .filter(btn => btn.group === 'list')
               .map((button, index) => (
                 <div key={index} title={button.tooltip}>
                   <Button
@@ -451,7 +473,7 @@ function EditorComponent({
           {/* Alignment Group */}
           <div className="flex gap-1">
             {editorButtons
-              .filter(btn => btn.tooltip.startsWith('Align'))
+              .filter(btn => btn.group === 'align')
               .map((button, index) => (
                 <div key={index} title={button.tooltip}>
                   <Button
@@ -471,7 +493,7 @@ function EditorComponent({
           {/* Super/Subscript Group */}
           <div className="flex gap-1">
             {editorButtons
-              .filter(btn => ['Superscript', 'Subscript'].includes(btn.tooltip))
+              .filter(btn => btn.group === 'script')
               .map((button, index) => (
                 <div key={index} title={button.tooltip}>
                   <Button
@@ -491,7 +513,7 @@ function EditorComponent({
           {/* Insert Group */}
           <div className="flex gap-1">
             {editorButtons
-              .filter(btn => ['Insert Link', 'Insert Image', 'Insert Table', 'Insert Horizontal Rule', 'Code Block'].includes(btn.tooltip))
+              .filter(btn => btn.group === 'insert')
               .map((button, index) => (
                 <div key={index} title={button.tooltip}>
                   <Button
