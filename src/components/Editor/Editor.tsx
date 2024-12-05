@@ -375,21 +375,17 @@ function EditorComponent({
   return (
     <div className={`prose max-w-none w-full ${isDarkMode ? 'prose-invert' : ''}`}>
       <div className="flex flex-col gap-2 mb-4 p-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-2">
           <CategorySelector
             categories={categories}
             selectedCategoryId={selectedCategoryId}
             onSelectCategory={onSelectCategory}
           />
-          <AIAssistant 
-            currentContent={editor.getHTML()}
-            onInsertText={(text) => {
-              editor.commands.setContent(text)
-              editor.commands.focus()
-            }}
-          />
         </div>
-        <div className="flex flex-wrap gap-4">
+        <div className={`
+          flex flex-wrap gap-4 p-2 rounded-lg border
+          ${isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-100/50 border-gray-200'}
+        `}>
           {/* History Group */}
           <div className="flex gap-1">
             {editorButtons
