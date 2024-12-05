@@ -1,6 +1,10 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+// Core imports
+import { useEffect, useState } from 'react'
+import { useTheme } from '@/contexts/ThemeContext'
+
+// Editor imports
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
@@ -22,9 +26,14 @@ import TableRow from '@tiptap/extension-table-row'
 import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
-import { useEffect, useState } from 'react'
+
+// UI imports
 import { Button } from '@/components/Button'
-import { useTheme } from '@/contexts/ThemeContext'
+import { CategorySelector } from '../CategorySelector'
+
+// Types
+import { Category } from '@/types'
+import { CodeBlock } from './extensions/CodeBlock'
 
 import {
   Bold,
