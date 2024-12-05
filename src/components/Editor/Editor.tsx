@@ -68,17 +68,17 @@ import { CodeBlock } from './extensions/CodeBlock'
 interface EditorProps {
   content: string
   onChange: (content: string) => void
-  categories?: Category[]
-  selectedCategoryId?: string | null
-  onSelectCategory?: (categoryId: string | null) => void
+  categories: Category[]
+  selectedCategoryId: string | null
+  onSelectCategory: (categoryId: string | null) => void
 }
 
 function EditorComponent({
   content,
   onChange,
-  categories = [],
-  selectedCategoryId = null,
-  onSelectCategory = () => {},
+  categories,
+  selectedCategoryId,
+  onSelectCategory,
 }: EditorProps) {
   const { isDarkMode } = useTheme()
   const [isMounted, setIsMounted] = useState(false)

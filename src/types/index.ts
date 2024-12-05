@@ -13,6 +13,8 @@ export interface Note {
 export interface Category {
   id: string
   name: string
-  parentId: string | null
+  parent_id: string | null
   order: number
+  created_at: string
+  updated_at: string
 }
