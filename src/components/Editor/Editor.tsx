@@ -245,25 +245,25 @@ function EditorComponent({
       active: editor?.isActive('underline'),
     },
     {
-      tooltip: 'Strike (⌘⇧X)',
+      tooltip: 'Strike',
       icon: <Strikethrough className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleStrike().run(),
       active: editor?.isActive('strike'),
     },
     {
-      tooltip: 'Code Block (⌘⇧C)',
+      tooltip: 'Code Block',
       icon: <Code className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleNode('codeBlock', 'paragraph').run(),
       active: editor?.isActive('codeBlock'),
     },
     {
-      tooltip: 'Bullet List (⌘⇧8)',
+      tooltip: 'Bullet List',
       icon: <List className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleBulletList().run(),
       active: editor?.isActive('bulletList'),
     },
     {
-      tooltip: 'Ordered List (⌘⇧7)',
+      tooltip: 'Ordered List',
       icon: <ListOrdered className="w-4 h-4" />,
       onClick: () => editor?.chain().focus().toggleOrderedList().run(),
       active: editor?.isActive('orderedList'),
@@ -367,21 +367,147 @@ function EditorComponent({
             }}
           />
         </div>
-        <div className="flex flex-wrap gap-2">
-          {editorButtons.map((button, index) => (
-          <div key={index} title={button.tooltip}>
-            <Button
-              size="sm"
-              isIconOnly
-              variant={button.active ? "primary" : "default"}
-              onClick={button.onClick}
-              disabled={button.disabled}
-              className="w-8 h-8"
-            >
-              {button.icon}
-            </Button>
+        <div className="flex flex-wrap gap-4">
+          {/* History Group */}
+          <div className="flex gap-1">
+            {editorButtons
+              .filter(btn => ['Undo', 'Redo'].includes(btn.tooltip))
+              .map((button, index) => (
+                <div key={index} title={button.tooltip}>
+                  <Button
+                    size="sm"
+                    isIconOnly
+                    variant={button.active ? "primary" : "default"}
+                    onClick={button.onClick}
+                    disabled={button.disabled}
+                    className="w-8 h-8"
+                  >
+                    {button.icon}
+                  </Button>
+                </div>
+              ))}
           </div>
-        ))}
+
+          {/* Basic Formatting Group */}
+          <div className="flex gap-1">
+            {editorButtons
+              .filter(btn => ['Bold', 'Italic', 'Underline', 'Strike'].includes(btn.tooltip))
+              .map((button, index) => (
+                <div key={index} title={button.tooltip}>
+                  <Button
+                    size="sm"
+                    isIconOnly
+                    variant={button.active ? "primary" : "default"}
+                    onClick={button.onClick}
+                    disabled={button.disabled}
+                    className="w-8 h-8"
+                  >
+                    {button.icon}
+                  </Button>
+                </div>
+              ))}
+          </div>
+
+          {/* Headings Group */}
+          <div className="flex gap-1">
+            {editorButtons
+              .filter(btn => ['Heading 1', 'Heading 2', 'Heading 3'].includes(btn.tooltip))
+              .map((button, index) => (
+                <div key={index} title={button.tooltip}>
+                  <Button
+                    size="sm"
+                    isIconOnly
+                    variant={button.active ? "primary" : "default"}
+                    onClick={button.onClick}
+                    disabled={button.disabled}
+                    className="w-8 h-8"
+                  >
+                    {button.icon}
+                  </Button>
+                </div>
+              ))}
+          </div>
+
+          {/* Lists and Quote Group */}
+          <div className="flex gap-1">
+            {editorButtons
+              .filter(btn => ['Bullet List', 'Ordered List', 'Quote'].includes(btn.tooltip))
+              .map((button, index) => (
+                <div key={index} title={button.tooltip}>
+                  <Button
+                    size="sm"
+                    isIconOnly
+                    variant={button.active ? "primary" : "default"}
+                    onClick={button.onClick}
+                    disabled={button.disabled}
+                    className="w-8 h-8"
+                  >
+                    {button.icon}
+                  </Button>
+                </div>
+              ))}
+          </div>
+
+          {/* Alignment Group */}
+          <div className="flex gap-1">
+            {editorButtons
+              .filter(btn => btn.tooltip.startsWith('Align'))
+              .map((button, index) => (
+                <div key={index} title={button.tooltip}>
+                  <Button
+                    size="sm"
+                    isIconOnly
+                    variant={button.active ? "primary" : "default"}
+                    onClick={button.onClick}
+                    disabled={button.disabled}
+                    className="w-8 h-8"
+                  >
+                    {button.icon}
+                  </Button>
+                </div>
+              ))}
+          </div>
+
+          {/* Super/Subscript Group */}
+          <div className="flex gap-1">
+            {editorButtons
+              .filter(btn => ['Superscript', 'Subscript'].includes(btn.tooltip))
+              .map((button, index) => (
+                <div key={index} title={button.tooltip}>
+                  <Button
+                    size="sm"
+                    isIconOnly
+                    variant={button.active ? "primary" : "default"}
+                    onClick={button.onClick}
+                    disabled={button.disabled}
+                    className="w-8 h-8"
+                  >
+                    {button.icon}
+                  </Button>
+                </div>
+              ))}
+          </div>
+
+          {/* Insert Group */}
+          <div className="flex gap-1">
+            {editorButtons
+              .filter(btn => ['Insert Link', 'Insert Image', 'Insert Table', 'Insert Horizontal Rule', 'Code Block'].includes(btn.tooltip))
+              .map((button, index) => (
+                <div key={index} title={button.tooltip}>
+                  <Button
+                    size="sm"
+                    isIconOnly
+                    variant={button.active ? "primary" : "default"}
+                    onClick={button.onClick}
+                    disabled={button.disabled}
+                    className="w-8 h-8"
+                  >
+                    {button.icon}
+                  </Button>
+                </div>
+              ))}
+          </div>
+        </div>
       </div>
       <EditorContent 
         editor={editor} 
