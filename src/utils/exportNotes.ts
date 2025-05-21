@@ -1,6 +1,10 @@
 import { Note } from '@/types'
+import TurndownService from 'turndown' // Import TurndownService
 
 export function exportMarkdown(note: Note): string {
+  const turndownService = new TurndownService()
+  const markdownContent = turndownService.turndown(note.content || '') // Convert HTML to Markdown
+
   const frontMatter = `---
 title: ${note.title || 'Untitled'}
 date: ${note.created_at}
@@ -9,7 +13,7 @@ tags: ${note.tags?.join(', ') || ''}
 ---
 
 `
-  return frontMatter + note.content
+  return frontMatter + markdownContent
 }
 
 export function exportHTML(note: Note): string {

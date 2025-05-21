@@ -18,9 +18,10 @@ interface SidebarProps {
   selectedCategoryId: string | null
   onSelectNote: (note: Note) => void
   onSelectCategory: (categoryId: string | null) => void
-  onCreateNote: () => void
+  onCreateNote: (categoryId?: string | null) => void // Modified from previous analysis, page.tsx passes it like this
   onUpdateNote: (note: Note) => void
   onUpdateCategories: (categories: Category[]) => void
+  searchInputRef?: React.RefObject<HTMLInputElement> // Add searchInputRef prop
 }
 
 export function Sidebar({
@@ -33,6 +34,7 @@ export function Sidebar({
   onCreateNote,
   onUpdateNote,
   onUpdateCategories,
+  searchInputRef, // Destructure searchInputRef
 }: SidebarProps) {
   const { isDarkMode } = useTheme()
   const [searchQuery, setSearchQuery] = useState('')
@@ -65,6 +67,7 @@ export function Sidebar({
           prefix={<Search className="w-4 h-4" />}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          ref={searchInputRef} // Pass the ref to the Input component
         />
       </div>
 

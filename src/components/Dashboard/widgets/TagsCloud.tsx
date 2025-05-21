@@ -66,20 +66,29 @@ export function TagsCloud({ notes }: TagsCloudProps) {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {tagCounts.map(({ tag, count }) => (
-          <span
-            key={tag}
-            className={`
-              ${getTagSize(count)}
-              ${getTagColor(count)}
-              transition-colors duration-200 cursor-default
-              hover:text-blue-500
-            `}
-            title={`${count} note${count === 1 ? '' : 's'}`}
-          >
-            {tag}
-          </span>
-        ))}
+        {tagCounts.length === 0 ? (
+          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            No tags found.
+          </p>
+        ) : (
+          tagCounts.map(({ tag, count }) => (
+            <span
+              key={tag}
+              className={`
+                ${getTagSize(count)}
+                ${getTagColor(count)}
+                transition-colors duration-200 cursor-pointer
+                hover:text-blue-500 dark:hover:text-blue-400
+                px-2 py-0.5 rounded-md
+                ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-100'}
+              `}
+              title={`${count} note${count === 1 ? '' : 's'}`}
+              onClick={() => console.log(`Tag clicked: ${tag}`)} // Conceptual click handler
+            >
+              {tag}
+            </span>
+          ))
+        )}
       </div>
     </div>
   )
