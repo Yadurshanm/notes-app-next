@@ -13,11 +13,7 @@ const ThemeContext = createContext<ThemeContextType>({
 })
 
 export function useTheme() {
-  const context = useContext(ThemeContext)
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider')
-  }
-  return context
+  return useContext(ThemeContext)
 }
 
 interface ThemeProviderProps {
@@ -25,14 +21,15 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [mounted, setMounted] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
     const savedTheme = localStorage.getItem('theme')
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    setIsDarkMode(savedTheme === 'dark' || (!savedTheme && prefersDark))
+    const initialDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark)
+    setIsDarkMode(initialDarkMode)
   }, [])
 
   useEffect(() => {
@@ -47,22 +44,17 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }, [isDarkMode, mounted])
 
   const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode)
+    setIsDarkMode(prev => !prev)
   }
 
+  // Prevent flash of wrong theme
   if (!mounted) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="animate-pulse">Loading...</div>
-      </div>
-    )
+    return null
   }
 
   return (
     <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-      <div className={isDarkMode ? 'dark' : 'light'}>
-        {children}
-      </div>
+      {children}
     </ThemeContext.Provider>
   )
 }

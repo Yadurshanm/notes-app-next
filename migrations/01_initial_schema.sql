@@ -2,7 +2,7 @@
 drop table if exists notes;
 drop table if exists categories;
 
--- Create categories table
+-- Create categories table first
 create table categories (
   id uuid default gen_random_uuid() primary key,
   name text not null,
@@ -22,13 +22,7 @@ create policy "Allow all operations for all users" on categories
   using (true)
   with check (true);
 
--- Create trigger for categories updated_at
-create trigger update_categories_updated_at
-  before update on categories
-  for each row
-  execute function update_updated_at_column();
-
--- Create notes table
+-- Create notes table with category reference
 create table notes (
   id uuid default gen_random_uuid() primary key,
   title text not null default 'Untitled',
@@ -41,13 +35,7 @@ create table notes (
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- Add indexes
-create index notes_title_content_idx on notes using gin(to_tsvector('english', title || ' ' || content));
-create index notes_tags_idx on notes using gin(tags);
-create index notes_order_idx on notes("order");
-create index notes_is_starred_idx on notes(is_starred);
-
--- Enable Row Level Security
+-- Enable Row Level Security for notes
 alter table notes enable row level security;
 
 -- Create policy to allow all operations for all users
@@ -66,8 +54,21 @@ begin
 end;
 $$ language plpgsql;
 
--- Create trigger to automatically update updated_at
+-- Create trigger for notes updated_at
 create trigger update_notes_updated_at
   before update on notes
   for each row
   execute function update_updated_at_column();
+
+-- Create trigger for categories updated_at
+create trigger update_categories_updated_at
+  before update on categories
+  for each row
+  execute function update_updated_at_column();
+
+-- Create indexes for better performance
+create index notes_category_id_idx on notes(category_id);
+create index notes_order_idx on notes("order");
+create index notes_is_starred_idx on notes(is_starred);
+create index categories_parent_id_idx on categories(parent_id);
+create index categories_order_idx on categories("order");

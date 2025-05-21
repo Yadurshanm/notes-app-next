@@ -1,4 +1,5 @@
 import './globals.css'
+import './antd.css'
 import { Inter } from 'next/font/google'
 import { Providers } from '@/components/Providers'
 

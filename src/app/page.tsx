@@ -1,58 +1,80 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
-import { Button, Input, Tooltip } from '@nextui-org/react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import { ConnectionStatus } from '@/components/ConnectionStatus'
 import { Version } from '@/components/Version'
+import { Input } from '@/components/Input'
+import { TagInput } from '@/components/TagInput'
+import { Button } from '@/components/Button'
 import { toast } from 'sonner'
-import {
-  Plus,
-  Search,
-  Sun,
-  Moon,
-} from 'lucide-react'
+import { downloadNote } from '@/utils/exportNotes' // Import downloadNote
+import { FileDown } from 'lucide-react' // Import FileDown icon
 import { useTheme } from '@/contexts/ThemeContext'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { supabase } from '@/lib/supabase'
-import { Note } from '@/types'
-import { NotesList } from '@/components/NotesList'
+import { Note, Category } from '@/types'
 import { Editor } from '@/components/Editor'
 import { AppLayout } from '@/components/AppLayout'
+import { useSearchParams } from 'next/navigation'
+import { Sidebar } from '@/components/Sidebar'
 
 export default function Home() {
   const [notes, setNotes] = useState<Note[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [selectedNote, setSelectedNote] = useState<Note | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [title, setTitle] = useState('')
   const [noteContent, setNoteContent] = useState('')
+  const [currentTags, setCurrentTags] = useState<string[]>([]) // State for tags
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
-  const { isDarkMode, toggleTheme } = useTheme()
-  const searchInputRef = useRef<HTMLInputElement>(null)
+  const { isDarkMode } = useTheme()
   const saveTimeoutRef = useRef<NodeJS.Timeout>()
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const createTimeoutRef = useRef<NodeJS.Timeout>()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
-    fetchNotes()
+    fetchData()
     return () => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
       if (createTimeoutRef.current) clearTimeout(createTimeoutRef.current)
     }
   }, [])
 
-  const fetchNotes = async () => {
+  useEffect(() => {
+    const noteId = searchParams.get('note')
+    if (noteId && notes.length > 0) {
+      const note = notes.find(n => n.id === noteId)
+      if (note) {
+        handleNoteSelect(note)
+      }
+    }
+  }, [notes, searchParams])
+
+  const fetchData = async () => {
     try {
       setError(null)
-      const { data, error } = await supabase
-        .from('notes')
-        .select('*')
-        .order('updated_at', { ascending: false })
+      const [notesResponse, categoriesResponse] = await Promise.all([
+        supabase
+          .from('notes')
+          .select('*')
+          .order('order', { ascending: true }),
+        supabase
+          .from('categories')
+          .select('*')
+          .order('order', { ascending: true })
+      ])
 
-      if (error) throw error
-      setNotes(data || [])
+      if (notesResponse.error) throw notesResponse.error
+      if (categoriesResponse.error) throw categoriesResponse.error
+
+      setNotes(notesResponse.data || [])
+      setCategories(categoriesResponse.data || [])
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error fetching notes'
+      const errorMessage = error instanceof Error ? error.message : 'Error fetching data'
       setError(errorMessage)
       toast.error(errorMessage)
     } finally {
@@ -60,13 +82,32 @@ export default function Home() {
     }
   }
 
-  const createNote = async () => {
+  const createNote = async (categoryId?: string | null) => {
+    const targetCategoryId = categoryId ?? selectedCategory
+    
+    // If we're creating a note in a category, make sure the category exists
+    if (targetCategoryId) {
+      const { data: categoryExists } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('id', targetCategoryId)
+        .single()
+
+      if (!categoryExists) {
+        toast.error('Category not found')
+        return
+      }
+    }
     try {
       const newNote = {
         title: 'Untitled',
         content: '',
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
+        category_id: targetCategoryId,
+        tags: [],
+        is_starred: false,
+        order: notes.filter(n => n.category_id === targetCategoryId).length
       }
 
       const { data, error } = await supabase
@@ -81,6 +122,7 @@ export default function Home() {
         setSelectedNote(data)
         setTitle(data.title)
         setNoteContent(data.content)
+        setCurrentTags(data.tags || []) // Set tags for new note
         toast.success('New note created')
       }
     } catch (error) {
@@ -89,7 +131,7 @@ export default function Home() {
     }
   }
 
-  const updateNote = async (noteTitle?: string, noteContent?: string) => {
+  const updateNote = async (noteTitle?: string, noteContent?: string, noteTags?: string[]) => {
     if (!selectedNote) {
       toast.warning('No note selected')
       return
@@ -105,7 +147,8 @@ export default function Home() {
         .update({ 
           title: updatedTitle, 
           content: updatedContent,
-          updated_at: now
+          updated_at: now,
+          tags: noteTags !== undefined ? noteTags : selectedNote.tags
         })
         .eq('id', selectedNote.id)
         .select('*')
@@ -128,46 +171,69 @@ export default function Home() {
   }
 
   const handleNoteSelect = (note: Note) => {
-    // Use a single state update to prevent race conditions
     requestAnimationFrame(() => {
       setSelectedNote(note)
       setTitle(note.title)
       setNoteContent(note.content)
+      setCurrentTags(note.tags || []) // Load tags for selected note
     })
   }
 
-  const debouncedSave = (noteTitle: string, noteContent: string) => {
+  // Helper function to compare arrays (for tags)
+  const areArraysEqual = (arr1: string[], arr2: string[]) => {
+    if (arr1.length !== arr2.length) return false
+    for (let i = 0; i < arr1.length; i++) {
+      if (arr1[i] !== arr2[i]) return false
+    }
+    return true
+  }
+
+  const debouncedSave = (currentTitle: string, currentContent: string, currentTagArray: string[]) => {
     if (!selectedNote) return
 
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current)
     }
 
-    // Only save if there are actual changes
-    if (noteTitle !== selectedNote.title || noteContent !== selectedNote.content) {
+    const originalTags = selectedNote.tags || []
+    if (
+      currentTitle !== selectedNote.title ||
+      currentContent !== selectedNote.content ||
+      !areArraysEqual(currentTagArray, originalTags)
+    ) {
+      // Update selectedNote immediately for optimistic UI and so updateNote gets correct tags
+      // This is a bit tricky as selectedNote is also used to compare against.
+      // A cleaner approach might be to pass all updated fields (title, content, tags) to updateNote.
+      // For now, ensuring selectedNote.tags is updated before calling updateNote via timeout.
+      const updatedSelectedNote = { ...selectedNote, title: currentTitle, content: currentContent, tags: currentTagArray };
+      setSelectedNote(updatedSelectedNote);
+
+
       saveTimeoutRef.current = setTimeout(() => {
-        updateNote(noteTitle, noteContent)
+        // Pass specific values to updateNote to avoid issues with closure over selectedNote
+        updateNote(currentTitle, currentContent, currentTagArray)
       }, 1000)
     }
   }
 
-  const debouncedCreate = async (noteTitle: string, noteContent: string) => {
+  const debouncedCreate = async (noteTitle: string, noteContent: string, noteTags: string[]) => {
     if (createTimeoutRef.current) {
       clearTimeout(createTimeoutRef.current)
     }
 
     createTimeoutRef.current = setTimeout(async () => {
       try {
-        const newNote = {
+        const newNoteData = { // Renamed to avoid conflict with Note type
           title: noteTitle,
           content: noteContent,
+          tags: noteTags, // Add tags to new note creation
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         }
 
         const { data, error } = await supabase
           .from('notes')
-          .insert([newNote])
+          .insert([newNoteData])
           .select('*')
           .single()
 
@@ -175,6 +241,9 @@ export default function Home() {
         if (data) {
           setNotes([data, ...notes])
           setSelectedNote(data)
+          setTitle(data.title) // Ensure UI updates if debouncedCreate sets these
+          setNoteContent(data.content)
+          setCurrentTags(data.tags || [])
           toast.success('Note created')
         }
       } catch (error) {
@@ -184,23 +253,38 @@ export default function Home() {
     }, 1000)
   }
 
-  const handleTitleChange = (newTitle: string) => {
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = e.target.value
     setTitle(newTitle)
     
-    if (!selectedNote && (newTitle || noteContent)) {
-      debouncedCreate(newTitle, noteContent)
-    } else {
-      debouncedSave(newTitle, noteContent)
+    if (!selectedNote && (newTitle || noteContent || currentTags.length > 0)) {
+      debouncedCreate(newTitle, noteContent, currentTags)
+    } else if (selectedNote) {
+      debouncedSave(newTitle, noteContent, currentTags)
     }
   }
 
   const handleContentChange = (newContent: string) => {
     setNoteContent(newContent)
-    
-    if (!selectedNote && (title || newContent)) {
-      debouncedCreate(title, newContent)
-    } else {
-      debouncedSave(title, newContent)
+
+    if (!selectedNote && (title || newContent || currentTags.length > 0)) {
+      debouncedCreate(title, newContent, currentTags)
+    } else if (selectedNote) {
+      debouncedSave(title, newContent, currentTags)
+    }
+  }
+
+  const handleTagsChange = (newTags: string[]) => {
+    setCurrentTags(newTags)
+    if (selectedNote) {
+      // Directly update selectedNote.tags so that debouncedSave can use it for comparison
+      // and updateNote receives the latest tags.
+      // This is a workaround for selectedNote in debouncedSave closure.
+      // A better way would be for updateNote to accept all fields explicitly.
+      // setSelectedNote(prev => prev ? ({ ...prev, tags: newTags }) : null); // This updates selectedNote state
+      debouncedSave(title, noteContent, newTags)
+    } else if (title || noteContent || newTags.length > 0) { // Creating new note
+      debouncedCreate(title, noteContent, newTags)
     }
   }
 
@@ -218,6 +302,7 @@ export default function Home() {
         setSelectedNote(null)
         setTitle('')
         setNoteContent('')
+        setCurrentTags([]) // Clear tags when note is deleted
       }
       toast.success('Note deleted')
     } catch (error) {
@@ -242,90 +327,94 @@ export default function Home() {
 
   if (loading || error) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        {loading ? (
-          <LoadingSpinner message="Loading notes..." />
-        ) : (
-          <div className="text-center">
-            <p className="text-red-500 mb-4">{error}</p>
-            <Button color="primary" onClick={fetchNotes}>
-              Retry
-            </Button>
+      <AppLayout
+        content={
+          <div className="h-screen flex items-center justify-center">
+            {loading ? (
+              <LoadingSpinner message="Loading notes..." />
+            ) : (
+              <div className="text-center">
+                <p className="text-red-500 mb-4">{error}</p>
+                <Button onClick={fetchData}>
+                  Retry
+                </Button>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        }
+      />
     )
   }
 
   const sidebar = (
-    <div className="flex flex-col h-full">
-      <div className="px-4 pt-4 pb-2 space-y-3 flex-none">
-        <div className="flex items-center justify-between gap-2">
-          <Button
-            color="primary"
-            startContent={<Plus className="h-4 w-4" />}
-            onClick={createNote}
-            className="flex-1"
-          >
-            New Note
-            <span className="ml-1 text-xs opacity-70">(⌘N)</span>
-          </Button>
-          <Tooltip content={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
-            <Button
-              isIconOnly
-              variant="flat"
-              onClick={toggleTheme}
-            >
-              {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
-          </Tooltip>
-        </div>
-        <Input
-          ref={searchInputRef}
-          placeholder="Search notes... (⌘K)"
-          startContent={<Search className="h-4 w-4 text-gray-400" />}
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-          isClearable
-          classNames={{
-            input: isDarkMode ? 'bg-gray-800 text-white' : '',
-            inputWrapper: isDarkMode ? 'bg-gray-800' : ''
-          }}
-        />
-      </div>
-      <div className="flex-1 overflow-hidden">
-        <NotesList
-          notes={filteredNotes}
-          selectedNoteId={selectedNote?.id || null}
-          onSelectNote={handleNoteSelect}
-          onDeleteNote={deleteNote}
-        />
-      </div>
-      <div className={`p-2 border-t flex items-center justify-between text-xs ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}`}>
-        <ConnectionStatus />
-        <Version />
-      </div>
-    </div>
+    <Sidebar
+      notes={notes}
+      categories={categories}
+      selectedNoteId={selectedNote?.id || null}
+      selectedCategoryId={selectedCategory}
+      onSelectNote={handleNoteSelect}
+      onSelectCategory={setSelectedCategory}
+      onCreateNote={createNote}
+      onUpdateNote={(note) => updateNote(note.title, note.content, note.tags)} // Pass tags here
+      onUpdateCategories={setCategories}
+      searchInputRef={searchInputRef} // Pass the ref to Sidebar
+    />
   )
 
   const content = (
     <>
-      <div className={`p-4 border-b ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
-        <Input
-          placeholder="Note title"
-          value={title}
-          onValueChange={handleTitleChange}
-          size="lg"
-          classNames={{
-            input: isDarkMode ? 'bg-gray-800 text-white' : '',
-            inputWrapper: isDarkMode ? 'bg-gray-800' : ''
-          }}
-        />
+      <div className={`p-4 border-b ${isDarkMode ? 'bg-gray-900' : 'bg-white'} flex justify-between items-start`}>
+        <div className="flex-1"> {/* Container for title and tags */}
+          <Input
+            placeholder="Note title"
+            value={title}
+            onChange={handleTitleChange}
+            size="lg"
+            variant="borderless"
+            className="text-2xl font-semibold"
+          />
+          {selectedNote && (
+            <div className="mt-2">
+              <TagInput
+                tags={currentTags}
+                onChange={handleTagsChange}
+              />
+            </div>
+          )}
+        </div>
+        {selectedNote && ( // Only show export buttons if a note is selected
+          <div className="flex gap-2 ml-4 flex-shrink-0"> {/* Added flex-shrink-0 to prevent buttons from shrinking */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => downloadNote(selectedNote!, 'md')}
+              title="Export as Markdown"
+            >
+              <FileDown className="w-4 h-4 mr-2" />
+              MD
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => downloadNote(selectedNote!, 'html')}
+              title="Export as HTML"
+            >
+              <FileDown className="w-4 h-4 mr-2" />
+              HTML
+            </Button>
+          </div>
+        )}
       </div>
       <div className="flex-1 p-4 overflow-auto">
-        <Editor content={noteContent} onChange={handleContentChange} />
+        <Editor 
+          content={noteContent || ''} 
+          onChange={handleContentChange}
+          categories={categories || []}
+          selectedCategoryId={selectedCategory}
+          onSelectCategory={(id) => setSelectedCategory(id)}
+        />
         <div className={`mt-4 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-          Press ⌘S to save • Last saved: {new Date().toLocaleTimeString()}
+          Press ⌘S to save • Last saved: {selectedNote?.updated_at ? new Date(selectedNote.updated_at).toLocaleTimeString() : new Date().toLocaleTimeString()}
         </div>
       </div>
     </>
@@ -333,3 +422,9 @@ export default function Home() {
 
   return <AppLayout sidebar={sidebar} content={content} />
 }
+
+// Modify updateNote to accept tags explicitly
+const updateNoteOriginal = async (noteTitle?: string, noteContent?: string, noteTags?: string[]) => {
+  // This is a placeholder for the original updateNote if we need to revert or compare.
+  // The actual updateNote is modified in-place in the main component.
+};

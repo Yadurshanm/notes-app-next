@@ -9,16 +9,28 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@nextui-org/react": "^2.4.8",
+    "@azure/openai": "^2.0.0",
+    "@hello-pangea/dnd": "^17.0.0",
     "@supabase/supabase-js": "^2.46.2",
     "@tailwindcss/typography": "^0.5.15",
+    "@tiptap/extension-color": "^2.10.3",
+    "@tiptap/extension-font-family": "^2.10.3",
+    "@tiptap/extension-heading": "^2.10.3",
     "@tiptap/extension-highlight": "^2.10.3",
+    "@tiptap/extension-horizontal-rule": "^2.10.3",
     "@tiptap/extension-link": "^2.10.3",
+    "@tiptap/extension-placeholder": "^2.10.3",
     "@tiptap/extension-subscript": "^2.10.3",
     "@tiptap/extension-superscript": "^2.10.3",
+    "@tiptap/extension-table": "^2.10.3",
+    "@tiptap/extension-table-cell": "^2.10.3",
+    "@tiptap/extension-table-header": "^2.10.3",
+    "@tiptap/extension-table-row": "^2.10.3",
     "@tiptap/extension-task-item": "^2.10.3",
     "@tiptap/extension-task-list": "^2.10.3",
     "@tiptap/extension-text-align": "^2.10.3",
+    "@tiptap/extension-text-style": "^2.10.3",
+    "@tiptap/extension-typography": "^2.10.3",
     "@tiptap/extension-underline": "^2.10.3",
     "@tiptap/pm": "^2.10.3",
     "@tiptap/react": "^2.10.3",
@@ -29,12 +41,18 @@
     "autoprefixer": "^10.4.20",
     "framer-motion": "^11.13.1",
     "lucide-react": "^0.464.0",
+    "microsoft-cognitiveservices-speech-sdk": "^1.41.0",
     "next": "^15.0.3",
     "postcss": "^8.4.49",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sonner": "^1.7.0",
+    "tailwind-merge": "^2.5.5",
     "tailwindcss": "^3.4.15",
+    "turndown": "^7.2.0",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@types/turndown": "^5.0.5"
   }
 }
